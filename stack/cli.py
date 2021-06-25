@@ -8,7 +8,6 @@ from stack.tvm import tvm_command
 
 def main() -> None:
     """Hold all the commands in a group."""
-    cli.add_command(tvm_command)
     cli()
 
 
@@ -20,3 +19,5 @@ def cli() -> None:
 
 if __name__ == "__main__":
     main()
+
+cli.add_command(tvm_command)

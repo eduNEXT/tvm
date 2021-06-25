@@ -7,3 +7,4 @@ pylint
 pycodestyle
 pydocstyle
 coverage
+pytest

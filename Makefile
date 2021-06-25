@@ -1,5 +1,5 @@
 .PHONY: clean help \
-        quality requirements selfcheck test upgrade
+	quality requirements selfcheck test upgrade
 
 .DEFAULT_GOAL := help
 
@@ -45,6 +45,10 @@ requirements: ## install development environment requirements
 	pip install -r requirements/pip.txt
 	pip install -r requirements/pip-tools.txt
 	pip-sync requirements/dev.txt
+
+test: ## run unitary tests and meassure coverage
+	coverage run -m pytest
+	coverage report -m --fail-under=37
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."
