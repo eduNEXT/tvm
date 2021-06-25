@@ -1,6 +1,4 @@
-'''
-Tutor version manager, inspired in nvm for node
-'''
+"""Tutor version manager, inspired in nvm for node."""
 import datetime
 import json
 import os
@@ -23,13 +21,11 @@ TVM_PATH = pathlib.Path().resolve() / '.tvm'
 
 @click.group(name="tvm", short_help="Tutor Version Manager")
 def tvm_command() -> None:
-    pass
+    """Hold the main wrapper for the `stack tvm` command."""
 
 
-def validate_version(ctx, param, value):
-    """
-    Raise BadParameter if the value is not a tutor version.
-    """
+def validate_version(ctx, param, value):  # pylint: disable=unused-argument
+    """Raise BadParameter if the value is not a tutor version."""
     result = re.match(r'^v([0-9]+)\.([0-9]+)\.([0-9]+)$', value)
     if not result:
         raise click.BadParameter("format must be 'vX.Y.Z'")
@@ -37,22 +33,22 @@ def validate_version(ctx, param, value):
     return value
 
 
-def validate_version_installed(ctx, param, value):
-    """
-    Raise BadParameter if the value is not a tutor version.
-    """
+def validate_version_installed(ctx, param, value):  # pylint: disable=unused-argument
+    """Raise BadParameter if the value is not a tutor version."""
     validate_version(ctx, param, value)
 
     local_versions = [x for x in os.listdir(f'{TVM_PATH}') if os.path.isdir(f'{TVM_PATH}/{x}')]
     if value not in local_versions:
-        raise click.BadParameter("You must install the version before using it.\n\nUse `stack tvm list` for available versions.")
+        raise click.BadParameter("You must install the version before using it.\n\n"
+                                 "Use `stack tvm list` for available versions.")
 
     return value
 
 
 def setup_tvm():
     """
-    Creates the directory for all tutor versions.
+    Initialize the directory for all tutor versions.
+
     Can be called at any time, since it should not damage anything.
     """
     try:
@@ -74,8 +70,9 @@ def setup_tvm():
 @click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
 def list_versions(limit: int):
     """
-    Get all the versions from github and
-    mark the installed ones and the current.
+    Get all the versions from github.
+
+    Print and mark the both the installed ones and the current.
     """
     # from github
     api_info = requests.get(f'{VERSIONS_URL}?per_page={limit}').json()
@@ -99,14 +96,11 @@ def list_versions(limit: int):
         click.echo(click.style(name, fg=color))
 
 
-
 @click.command(name="install")
 @click.option('-f', '--force', is_flag=True, help='Uninstall before running')
 @click.argument('version', callback=validate_version)
 def install(force: bool, version: str):
-    """
-    Install the given VERSION of tutor in the .tvm directory
-    """
+    """Install the given VERSION of tutor in the .tvm directory."""
     setup_tvm()
 
     if force:
@@ -114,8 +108,9 @@ def install(force: bool, version: str):
 
     try:
         os.mkdir(f'{TVM_PATH}/{version}')
-    except FileExistsError:
-        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.', fg='red'))
+    except FileExistsError as error:
+        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.',
+                                           fg='red')) from error
 
     # Find the target version info
     api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
@@ -125,8 +120,8 @@ def install(force: bool, version: str):
         target['installation_date'] = str(datetime.datetime.now())
         with open(f'{TVM_PATH}/{version}/info.json', 'w') as info_file:
             json.dump(target, info_file, indent=4)
-    except IndexError:
-        raise click.UsageError(f'Could not find target: {version}')
+    except IndexError as error:
+        raise click.UsageError(f'Could not find target: {version}') from error
 
     # Get the code in zip format
     zipball_url = target.get('zipball_url')
@@ -145,38 +140,33 @@ def install(force: bool, version: str):
 
     # Create virtualenv
     subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-        shell=True, check=True,
-        executable='/bin/bash')
+                   shell=True, check=True,
+                   executable='/bin/bash')
 
     # Install tutor
-    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate; pip install {TVM_PATH}/{version}/overhangio-tutor-*/',
-        shell=True, check=True,
-        executable='/bin/bash')
+    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
+                   f'pip install {TVM_PATH}/{version}/overhangio-tutor-*/',
+                   shell=True, check=True,
+                   executable='/bin/bash')
 
 
 def do_uninstall(version: str):
-    """
-    Uninstalling is just deleting the dir.
-    """
+    """Uninstall the version by deleting the dir."""
     try:
         shutil.rmtree(f'{TVM_PATH}/{version}')
     except FileNotFoundError:
-        pass
+        click.echo('Nothing to uninstall for this version')
 
 
 @click.command(name="uninstall")
 @click.argument('version')
 def uninstall(version: str):
-    """
-    Install the given VERSION of tutor in the .tvm directory
-    """
+    """Install the given VERSION of tutor in the .tvm directory."""
     do_uninstall(version=version)
 
 
 def get_active_version() -> str:
-    """
-    Reads the current active version from the json/bash switcher
-    """
+    """Read the current active version from the json/bash switcher."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
     with open(info_file_path, 'r') as info_file:
         data = json.load(info_file)
@@ -185,9 +175,7 @@ def get_active_version() -> str:
 
 
 def set_active_version(version) -> None:
-    """
-    Sets the active version to VERSION
-    """
+    """Set the active version in the json to VERSION."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
     with open(info_file_path, 'r') as info_file:
@@ -200,9 +188,7 @@ def set_active_version(version) -> None:
 
 
 def set_switch_from_file() -> None:
-    """
-    Sets the active version to VERSION
-    """
+    """Set the active version from the json into the switcher."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
     with open(info_file_path, 'r') as info_file:
@@ -224,11 +210,8 @@ def set_switch_from_file() -> None:
     os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
-
 def install_current_venv() -> None:
-    """
-    Makes the switcher file availabe to the virtualenv path
-    """
+    """Make the switcher file availabe to the virtualenv path."""
     # link from the venv
     venv_tutor = pathlib.Path(sys.executable).parent.joinpath('tutor').resolve()
     try:
@@ -236,15 +219,14 @@ def install_current_venv() -> None:
     except FileExistsError:
         pass
     else:
-        click.echo(click.style('Re-activate your virtualenv for changes to take effect', fg='yellow'))
+        click.echo(click.style(
+            'Re-activate your virtualenv for changes to take effect', fg='yellow'))
 
 
 @click.command(name="setup")
 @click.option('-g', '--global', 'make_global', is_flag=True, help='Make the tutor command available to the cli')
 def install_global(make_global) -> None:
-    """
-    Makes the switcher file to anyone in the system
-    """
+    """Make the switcher file to anyone in the system."""
     setup_tvm()
     set_switch_from_file()
     install_current_venv()
@@ -261,9 +243,7 @@ def install_global(make_global) -> None:
 @click.command(name="use")
 @click.argument('version', callback=validate_version_installed)
 def use(version: str):
-    """
-    Configures the path to use VERSION
-    """
+    """Configure the path to use VERSION."""
     setup_tvm()
     set_active_version(version)
     set_switch_from_file()

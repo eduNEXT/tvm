@@ -12,6 +12,10 @@ click==8.0.1
     # via -r requirements/base.in
 idna==2.10
     # via requests
+jinja2==3.0.1
+    # via -r requirements/base.in
+markupsafe==2.0.1
+    # via jinja2
 requests==2.25.1
     # via -r requirements/base.in
 urllib3==1.26.6

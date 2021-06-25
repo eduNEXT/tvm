@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-"""
-Package metadata for stack.
-"""
+"""Package metadata for stack."""
 import os
 import re
 import sys

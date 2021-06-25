@@ -35,8 +35,8 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 
 quality: ## check coding style with pycodestyle and pylint
 	pylint stack *.py
-	pycodestyle stack tests  *.py
-	pydocstyle stack tests *.py
+	pycodestyle stack docs *.py
+	pydocstyle stack docs *.py
 	isort --check-only --diff --recursive stack *.py
 	python setup.py bdist_wheel
 	make selfcheck
