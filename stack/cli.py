@@ -2,6 +2,7 @@ import sys
 
 import click
 
+from stack import __version__
 from stack.tvm import tvm_command
 
 
@@ -25,6 +26,7 @@ def main() -> None:
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help", "help"]})
+@click.version_option(version=__version__)
 def cli() -> None:
     pass
 
