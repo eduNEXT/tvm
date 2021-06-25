@@ -245,6 +245,8 @@ def install_global(make_global) -> None:
     """
     Makes the switcher file to anyone in the system
     """
+    setup_tvm()
+    set_switch_from_file()
     install_current_venv()
 
     if make_global:
