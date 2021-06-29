@@ -48,7 +48,7 @@ requirements: ## install development environment requirements
 
 test: ## run unitary tests and meassure coverage
 	coverage run -m pytest
-	coverage report -m --fail-under=37
+	coverage report -m --fail-under=38
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."

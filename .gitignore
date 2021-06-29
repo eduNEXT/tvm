@@ -78,3 +78,8 @@ default.db
 private.py
 venv/
 venv3/
+
+# Local configurations
+# Note: maintain ignored until we know exactly what goes in the repo
+strains/*/env
+strains/*/data

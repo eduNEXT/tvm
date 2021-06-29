@@ -10,3 +10,4 @@ def test_cli_help():
 
     assert result.exit_code == 0
     assert ' tvm ' in result.output
+    assert ' config ' in result.output

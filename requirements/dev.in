@@ -8,3 +8,4 @@ pycodestyle
 pydocstyle
 coverage
 pytest
+pudb

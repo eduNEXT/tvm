@@ -1,8 +1,8 @@
 {% if tutor_root %}
-echo -e "Using the \033[1;32mstack-builder/ednx_envs/lilac\033[0m environment"
-export TUTOR_ROOT=/data/eduNEXT/ws-producto/tools/stack-builder/ednx_envs/lilac
+echo -e "Using the \033[1;32m{{ config_name }}\033[0m config"
+export TUTOR_ROOT={{ tutor_root }}
 {% else %}
-echo -e "You have not selected any environment. Tutor will use the global default \033[1;31m~.local/share/tutor\033[0m"
+echo -e "You have not selected any config. Tutor will use the global default \033[1;31m~.local/share/tutor\033[0m"
 {% endif %}
 {% if version %}
 {{ tvm }}/{{ version }}/venv/bin/tutor $@

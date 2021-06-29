@@ -59,7 +59,7 @@ def setup_tvm():
     info_file_path = f'{TVM_PATH}/current_bin.json'
     if not os.path.exists(info_file_path):
         data = {
-            "current": None,
+            "active": None,
             "tutor_root": None,
         }
         with open(info_file_path, 'w') as info_file:
@@ -85,13 +85,13 @@ def list_versions(limit: int):
     version_names = list(set(api_versions + local_versions))
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
 
-    current = get_active_version()
+    active = get_active_version()
 
     for name in version_names:
         color = 'yellow'
         if name in local_versions:
             color = 'green'
-        if name == current:
+        if name == active:
             name = f'{name} <-- active'
         click.echo(click.style(name, fg=color))
 
@@ -196,9 +196,15 @@ def set_switch_from_file() -> None:
 
     switcher = Template(open('stack/templates/tutor_switcher.j2').read())
 
+    try:
+        config_name = '/'.join(data['tutor_root'].split('/')[-3:])
+    except:  # pylint: disable=bare-except
+        config_name = data.get('tutor_root', None)
+
     context = {
         'version': data.get('active', None),
         'tutor_root': data.get('tutor_root', None),
+        'config_name': config_name,
         'tvm': TVM_PATH,
     }
 
@@ -210,7 +216,7 @@ def set_switch_from_file() -> None:
     os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
-def install_current_venv() -> None:
+def install_venv() -> None:
     """Make the switcher file availabe to the virtualenv path."""
     # link from the venv
     venv_tutor = pathlib.Path(sys.executable).parent.joinpath('tutor').resolve()
@@ -229,7 +235,7 @@ def install_global(make_global) -> None:
     """Make the switcher file to anyone in the system."""
     setup_tvm()
     set_switch_from_file()
-    install_current_venv()
+    install_venv()
 
     if make_global:
         try:
