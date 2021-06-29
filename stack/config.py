@@ -21,17 +21,19 @@ def set_active_root(path) -> None:
 
     # check version for this tutor root configuration
     active_tutor = data.get('active')
-    with open(pathlib.Path(path).joinpath('env', 'version'), 'r') as version_file:
-        root_version = f'v{version_file.read()}'
+    version_filepath = pathlib.Path(path).joinpath('env', 'version')
+    if version_filepath.exists():
+        with open(version_filepath, 'r') as version_file:
+            root_version = f'v{version_file.read()}'
 
-    if root_version != active_tutor:
-        click.echo(click.style(
-            'Incorrect version of tutor for this config.\n\n'
-            f'The tutor_root configuration you are loading uses {root_version}\n'
-            f'The active tutor version in TVM is {active_tutor}\n'
-            f'run: stack tvm use {root_version}',
-            fg='yellow'
-        ))
+        if root_version != active_tutor:
+            click.echo(click.style(
+                'Incorrect version of tutor for this config.\n\n'
+                f'The tutor_root configuration you are loading uses {root_version}\n'
+                f'The active tutor version in TVM is {active_tutor}\n'
+                f'run: stack tvm use {root_version}',
+                fg='yellow'
+            ))
 
     data['tutor_root'] = path
 
