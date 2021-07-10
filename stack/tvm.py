@@ -52,7 +52,7 @@ def validate_version_installed(ctx, param, value):  # pylint: disable=unused-arg
     return value
 
 
-def setup_tvm():
+def setup_tvm(clear: bool = False):
     """
     Initialize the directory for all tutor versions.
 
@@ -64,7 +64,7 @@ def setup_tvm():
         pass
 
     info_file_path = f'{TVM_PATH}/current_bin.json'
-    if not os.path.exists(info_file_path):
+    if not os.path.exists(info_file_path) or clear:
         data = {
             "active": None,
             "tutor_root": None,
