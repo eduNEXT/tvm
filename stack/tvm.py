@@ -239,9 +239,9 @@ def install_global(make_global) -> None:
 
     if make_global:
         try:
-            os.symlink(f'{TVM_PATH}/tutor_switcher', '/usr/bin/tutor')
+            os.symlink(f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor')
         except PermissionError:
-            subprocess.call(['sudo', 'ln', '-s', f'{TVM_PATH}/tutor_switcher', '/usr/bin/tutor'])
+            subprocess.call(['sudo', 'ln', '-s', f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor'])
         except FileExistsError:
             pass
 
