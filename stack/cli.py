@@ -4,8 +4,8 @@ import click
 
 from stack import __version__
 from stack.config import config_command
-from stack.tvm import tvm_command
 from stack.strain import strain_command
+from stack.tvm import tvm_command
 
 
 def main() -> None:
