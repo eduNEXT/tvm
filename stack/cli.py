@@ -5,6 +5,7 @@ import click
 from stack import __version__
 from stack.config import config_command
 from stack.tvm import tvm_command
+from stack.strain import strain_command
 
 
 def main() -> None:
@@ -23,3 +24,4 @@ if __name__ == "__main__":
 
 cli.add_command(tvm_command)
 cli.add_command(config_command)
+cli.add_command(strain_command)
