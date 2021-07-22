@@ -263,8 +263,22 @@ def use(version: str):
     set_switch_from_file()
 
 
+@click.command(name="pip", context_settings={"ignore_unknown_options": True})
+@click.argument('options', nargs=-1, type=click.UNPROCESSED)
+def pip(options):
+    """Use the package installer pip in current tutor version."""
+    version = get_active_version()
+    target_venv = f'{TVM_PATH}/{version}/venv'
+    options = " ".join(options)
+    subprocess.run(f'source {target_venv}/bin/activate;'
+                   f'pip {options}; deactivate',
+                   shell=True, check=True,
+                   executable='/bin/bash')
+
+
 tvm_command.add_command(list_versions)
 tvm_command.add_command(install)
 tvm_command.add_command(uninstall)
 tvm_command.add_command(use)
 tvm_command.add_command(install_global)
+tvm_command.add_command(pip)
