@@ -1,7 +1,9 @@
 """Package for tests of the tutor version manager."""
+import pytest
+from click.exceptions import BadParameter
 from click.testing import CliRunner
 
-from stack.tvm import tvm_command
+from stack.tvm import tvm_command, validate_version
 
 
 def test_tvm_help():
@@ -14,3 +16,8 @@ def test_tvm_help():
     assert ' list ' in result.output
     assert ' setup ' in result.output
     assert ' use ' in result.output
+
+
+def test_version_validator():
+    with pytest.raises(BadParameter):
+        validate_version(None, None, 'v12.0.')

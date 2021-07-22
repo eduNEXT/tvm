@@ -33,11 +33,18 @@ def validate_version(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
+def get_local_versions():
+    """Return a list of strings with the local version installed. If None, returns empty array."""
+    if os.path.exists(f'{TVM_PATH}'):
+        return [x for x in os.listdir(f'{TVM_PATH}') if os.path.isdir(f'{TVM_PATH}/{x}')]
+    return []
+
+
 def validate_version_installed(ctx, param, value):  # pylint: disable=unused-argument
     """Raise BadParameter if the value is not a tutor version."""
     validate_version(ctx, param, value)
 
-    local_versions = [x for x in os.listdir(f'{TVM_PATH}') if os.path.isdir(f'{TVM_PATH}/{x}')]
+    local_versions = get_local_versions()
     if value not in local_versions:
         raise click.BadParameter("You must install the version before using it.\n\n"
                                  "Use `stack tvm list` for available versions.")
@@ -79,7 +86,7 @@ def list_versions(limit: int):
     api_versions = [x.get('name') for x in api_info]
 
     # from the local .tvm
-    local_versions = [x for x in os.listdir(f'{TVM_PATH}') if os.path.isdir(f'{TVM_PATH}/{x}')]
+    local_versions = get_local_versions()
 
     click.echo(f'Listing the latest {limit} versions of tutor')
     version_names = list(set(api_versions + local_versions))
@@ -168,10 +175,11 @@ def uninstall(version: str):
 def get_active_version() -> str:
     """Read the current active version from the json/bash switcher."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
-    with open(info_file_path, 'r') as info_file:
-        data = json.load(info_file)
-
-    return data.get('active', 'Invalid active version')
+    if os.path.exists(info_file_path):
+        with open(info_file_path, 'r') as info_file:
+            data = json.load(info_file)
+        return data.get('active', 'Invalid active version')
+    return 'No active version installed'
 
 
 def set_active_version(version) -> None:
