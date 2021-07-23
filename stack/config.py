@@ -19,23 +19,27 @@ def set_active_root(path) -> None:
     with open(info_file_path, 'r') as info_file:
         data = json.load(info_file)
 
-    # check version for this tutor root configuration
-    active_tutor = data.get('active')
-    version_filepath = pathlib.Path(path).joinpath('env', 'version')
-    if version_filepath.exists():
-        with open(version_filepath, 'r') as version_file:
-            root_version = f'v{version_file.read()}'
+    # clear tutor root
+    if not path:
+        data['tutor_root'] = None
+    else:
+        # check version for this tutor root configuration
+        active_tutor = data.get('active')
+        version_filepath = pathlib.Path(path).joinpath('env', 'version')
+        if version_filepath.exists():
+            with open(version_filepath, 'r') as version_file:
+                root_version = f'v{version_file.read()}'
 
-        if root_version != active_tutor:
-            click.echo(click.style(
-                'Incorrect version of tutor for this config.\n\n'
-                f'The tutor_root configuration you are loading uses {root_version}\n'
-                f'The active tutor version in TVM is {active_tutor}\n'
-                f'run: stack tvm use {root_version}',
-                fg='yellow'
-            ))
+            if root_version != active_tutor:
+                click.echo(click.style(
+                    'Incorrect version of tutor for this config.\n\n'
+                    f'The tutor_root configuration you are loading uses {root_version}\n'
+                    f'The active tutor version in TVM is {active_tutor}\n'
+                    f'run: stack tvm use {root_version}',
+                    fg='yellow'
+                ))
 
-    data['tutor_root'] = path
+        data['tutor_root'] = path
 
     with open(info_file_path, 'w') as info_file:
         json.dump(data, info_file, indent=4)
@@ -63,4 +67,13 @@ def use(path: str):
     set_switch_from_file()
 
 
+@click.command(name="clear")
+def clear():
+    """Clear config files."""
+    setup_tvm()
+    set_active_root(path=None)
+    set_switch_from_file()
+
+
 config_command.add_command(use)
+config_command.add_command(clear)
