@@ -276,9 +276,32 @@ def pip(options):
                    executable='/bin/bash')
 
 
+@click.command(name="plugins")
+@click.argument('option')
+def plugins(option: str):
+    """With 'plugins list' you can list installed plugins by tutor version."""
+    if option == "list":
+        active = get_active_version()
+        local_versions = [x for x in os.listdir(f'{TVM_PATH}') if os.path.isdir(f'{TVM_PATH}/{x}')]
+
+        for version in local_versions:
+            version = str(version)
+            if version == active:
+                click.echo(click.style(f"{version} < -- active", fg='green'))
+            else:
+                click.echo(click.style(version, fg='yellow'))
+            subprocess.run(f"stack tvm use {version}; tutor plugins list | sed -n '2,$p'",
+                           shell=True, check=True, executable='/bin/bash')
+
+            print('')
+
+        subprocess.run(f"stack tvm use {active};", shell=True, check=True, executable='/bin/bash')
+
+
 tvm_command.add_command(list_versions)
 tvm_command.add_command(install)
 tvm_command.add_command(uninstall)
 tvm_command.add_command(use)
 tvm_command.add_command(install_global)
 tvm_command.add_command(pip)
+tvm_command.add_command(plugins)
