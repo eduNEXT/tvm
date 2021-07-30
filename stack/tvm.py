@@ -225,7 +225,7 @@ def set_switch_from_file() -> None:
 
 
 def install_venv() -> None:
-    """Make the switcher file availabe to the virtualenv path."""
+    """Make the switcher file available to the virtualenv path."""
     # link from the venv
     venv_tutor = pathlib.Path(sys.executable).parent.joinpath('tutor').resolve()
     try:

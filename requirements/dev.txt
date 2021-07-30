@@ -54,6 +54,10 @@ pyparsing==2.4.7
     # via packaging
 pytest==6.2.4
     # via -r requirements/dev.in
+pyyaml==5.4.1
+    # via
+    #   -r requirements/base.txt
+    #   kubernetes
 requests==2.25.1
     # via -r requirements/base.txt
 snowballstemmer==2.1.0
