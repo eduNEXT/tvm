@@ -263,17 +263,47 @@ def use(version: str):
     set_switch_from_file()
 
 
+def get_env_by_tutor_version(version):
+    """Get virtual environment by tutor version."""
+    return f'{TVM_PATH}/{version}/venv'
+
+
 @click.command(name="pip", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def pip(options):
     """Use the package installer pip in current tutor version."""
     version = get_active_version()
-    target_venv = f'{TVM_PATH}/{version}/venv'
+    target_venv = get_env_by_tutor_version(version)
     options = " ".join(options)
     subprocess.run(f'source {target_venv}/bin/activate;'
                    f'pip {options}; deactivate',
                    shell=True, check=True,
                    executable='/bin/bash')
+
+
+@click.group(name="plugins")
+def plugins() -> None:
+    """Use plugins commands."""
+
+
+@click.command(name="list")
+def list_plugins():
+    """List installed plugins by tutor version."""
+    active = get_active_version()
+    local_versions = get_local_versions()
+    for version in local_versions:
+        version = str(version)
+        if version == active:
+            click.echo(click.style(f"{version} < -- active", fg='green'))
+        else:
+            click.echo(click.style(version, fg='yellow'))
+        target_venv = get_env_by_tutor_version(version)
+        subprocess.run(f'source {target_venv}/bin/activate;'
+                       f'tutor plugins list; deactivate',
+                       shell=True, check=True,
+                       executable='/bin/bash')
+
+        click.echo('')
 
 
 tvm_command.add_command(list_versions)
@@ -282,3 +312,5 @@ tvm_command.add_command(uninstall)
 tvm_command.add_command(use)
 tvm_command.add_command(install_global)
 tvm_command.add_command(pip)
+tvm_command.add_command(plugins)
+plugins.add_command(list_plugins)
