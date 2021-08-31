@@ -84,3 +84,4 @@ venv3/
 strains/*/env
 strains/*/data
 strains/*/volumes
+strains/*/src
