@@ -45,6 +45,7 @@ requirements: ## install development environment requirements
 	pip install -r requirements/pip.txt
 	pip install -r requirements/pip-tools.txt
 	pip-sync requirements/dev.txt
+	pip install -e .
 
 test: ## run unitary tests and meassure coverage
 	coverage run -m pytest

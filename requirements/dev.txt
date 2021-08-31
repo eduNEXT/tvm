@@ -4,8 +4,6 @@
 #
 #    make upgrade
 #
--e file:///data/eduNEXT/ws-producto/tools/stack-builder
-    # via -r requirements/dev.in
 astroid==2.7.3
     # via pylint
 attrs==21.2.0
@@ -19,9 +17,7 @@ charset-normalizer==2.0.4
     #   -r requirements/base.txt
     #   requests
 click==8.0.1
-    # via
-    #   -r requirements/base.txt
-    #   stack-builder
+    # via -r requirements/base.txt
 coverage==5.5
     # via -r requirements/dev.in
 gitdb==4.0.7
@@ -29,9 +25,7 @@ gitdb==4.0.7
     #   -r requirements/base.txt
     #   gitpython
 gitpython==3.1.18
-    # via
-    #   -r requirements/base.txt
-    #   stack-builder
+    # via -r requirements/base.txt
 idna==3.2
     # via
     #   -r requirements/base.txt
@@ -43,9 +37,7 @@ isort==5.9.3
 jedi==0.18.0
     # via pudb
 jinja2==3.0.1
-    # via
-    #   -r requirements/base.txt
-    #   stack-builder
+    # via -r requirements/base.txt
 lazy-object-proxy==1.6.0
     # via astroid
 markupsafe==2.0.1
@@ -79,13 +71,9 @@ pyparsing==2.4.7
 pytest==6.2.5
     # via -r requirements/dev.in
 pyyaml==5.4.1
-    # via
-    #   -r requirements/base.txt
-    #   stack-builder
+    # via -r requirements/base.txt
 requests==2.26.0
-    # via
-    #   -r requirements/base.txt
-    #   stack-builder
+    # via -r requirements/base.txt
 smmap==4.0.0
     # via
     #   -r requirements/base.txt
