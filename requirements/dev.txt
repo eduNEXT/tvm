@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-astroid==2.5.6
+astroid==2.7.3
     # via pylint
 attrs==21.2.0
     # via pytest
@@ -12,7 +12,7 @@ certifi==2021.5.30
     # via
     #   -r requirements/base.txt
     #   requests
-chardet==4.0.0
+charset-normalizer==2.0.4
     # via
     #   -r requirements/base.txt
     #   requests
@@ -20,14 +20,22 @@ click==8.0.1
     # via -r requirements/base.txt
 coverage==5.5
     # via -r requirements/dev.in
-idna==2.10
+gitdb==4.0.7
+    # via
+    #   -r requirements/base.txt
+    #   gitpython
+gitpython==3.1.18
+    # via -r requirements/base.txt
+idna==3.2
     # via
     #   -r requirements/base.txt
     #   requests
 iniconfig==1.1.1
     # via pytest
-isort==5.9.1
+isort==5.9.3
     # via pylint
+jedi==0.18.0
+    # via pudb
 jinja2==3.0.1
     # via -r requirements/base.txt
 lazy-object-proxy==1.6.0
@@ -38,28 +46,38 @@ markupsafe==2.0.1
     #   jinja2
 mccabe==0.6.1
     # via pylint
-packaging==20.9
+packaging==21.0
     # via pytest
-pluggy==0.13.1
+parso==0.8.2
+    # via jedi
+platformdirs==2.3.0
+    # via pylint
+pluggy==1.0.0
     # via pytest
+pudb==2021.1
+    # via -r requirements/dev.in
 py==1.10.0
     # via pytest
 pycodestyle==2.7.0
     # via -r requirements/dev.in
 pydocstyle==6.1.1
     # via -r requirements/dev.in
-pylint==2.8.3
+pygments==2.10.0
+    # via pudb
+pylint==2.10.2
     # via -r requirements/dev.in
 pyparsing==2.4.7
     # via packaging
-pytest==6.2.4
+pytest==6.2.5
     # via -r requirements/dev.in
 pyyaml==5.4.1
+    # via -r requirements/base.txt
+requests==2.26.0
+    # via -r requirements/base.txt
+smmap==4.0.0
     # via
     #   -r requirements/base.txt
-    #   kubernetes
-requests==2.25.1
-    # via -r requirements/base.txt
+    #   gitdb
 snowballstemmer==2.1.0
     # via pydocstyle
 toml==0.10.2
@@ -70,5 +88,10 @@ urllib3==1.26.6
     # via
     #   -r requirements/base.txt
     #   requests
+urwid==2.1.2
+    # via pudb
 wrapt==1.12.1
     # via astroid
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

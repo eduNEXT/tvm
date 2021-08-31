@@ -69,7 +69,7 @@ def setup_tvm():
             "active": None,
             "tutor_root": None,
         }
-        with open(info_file_path, 'w') as info_file:
+        with open(info_file_path, 'w', encoding='utf-8') as info_file:
             json.dump(data, info_file, indent=4)
 
 
@@ -125,7 +125,7 @@ def install(force: bool, version: str):
         target = [x for x in api_info if x.get('name') == version][0]
         # print target data to dir
         target['installation_date'] = str(datetime.datetime.now())
-        with open(f'{TVM_PATH}/{version}/info.json', 'w') as info_file:
+        with open(f'{TVM_PATH}/{version}/info.json', 'w', encoding='utf-8') as info_file:
             json.dump(target, info_file, indent=4)
     except IndexError as error:
         raise click.UsageError(f'Could not find target: {version}') from error
@@ -134,7 +134,7 @@ def install(force: bool, version: str):
     zipball_url = target.get('zipball_url')
     zipball_filename = f'{TVM_PATH}/{version}.zip'
     stream = requests.get(zipball_url, stream=True)
-    with open(zipball_filename, 'wb') as target_file:
+    with open(zipball_filename, 'wb', encoding='utf-8') as target_file:
         for chunk in stream.iter_content(chunk_size=256):
             target_file.write(chunk)
 
@@ -176,7 +176,7 @@ def get_active_version() -> str:
     """Read the current active version from the json/bash switcher."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
     if os.path.exists(info_file_path):
-        with open(info_file_path, 'r') as info_file:
+        with open(info_file_path, 'r', encoding='utf-8') as info_file:
             data = json.load(info_file)
         return data.get('active', 'Invalid active version')
     return 'No active version installed'
@@ -186,12 +186,12 @@ def set_active_version(version) -> None:
     """Set the active version in the json to VERSION."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
-    with open(info_file_path, 'r') as info_file:
+    with open(info_file_path, 'r', encoding='utf-8') as info_file:
         data = json.load(info_file)
 
     data['active'] = version
 
-    with open(info_file_path, 'w') as info_file:
+    with open(info_file_path, 'w', encoding='utf-8') as info_file:
         json.dump(data, info_file, indent=4)
 
 
@@ -199,10 +199,11 @@ def set_switch_from_file() -> None:
     """Set the active version from the json into the switcher."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
-    with open(info_file_path, 'r') as info_file:
+    with open(info_file_path, 'r', encoding='utf-8') as info_file:
         data = json.load(info_file)
 
-    switcher = Template(open('stack/templates/tutor_switcher.j2').read())
+    with open('stack/templates/tutor_switcher.j2', encoding='utf-8') as template:
+        switcher = Template(template.read())
 
     try:
         config_name = '/'.join(data['tutor_root'].split('/')[-3:])
@@ -217,7 +218,7 @@ def set_switch_from_file() -> None:
     }
 
     switcher_file = f'{TVM_PATH}/tutor_switcher'
-    with open(switcher_file, mode="w", encoding="utf8") as of_text:
+    with open(switcher_file, mode='w', encoding='utf-8') as of_text:
         of_text.write(switcher.render(**context))
 
     # set execute permissions
