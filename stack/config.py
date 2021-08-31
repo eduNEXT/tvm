@@ -16,7 +16,7 @@ def set_active_root(path) -> None:
     """Set the active tutor_root in the json to PATH."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
-    with open(info_file_path, 'r') as info_file:
+    with open(info_file_path, 'r', encoding='utf-8') as info_file:
         data = json.load(info_file)
 
     # clear tutor root
@@ -27,7 +27,7 @@ def set_active_root(path) -> None:
         active_tutor = data.get('active')
         version_filepath = pathlib.Path(path).joinpath('env', 'version')
         if version_filepath.exists():
-            with open(version_filepath, 'r') as version_file:
+            with open(version_filepath, 'r', encoding='utf-8') as version_file:
                 root_version = f'v{version_file.read()}'
 
             if root_version != active_tutor:
@@ -41,7 +41,7 @@ def set_active_root(path) -> None:
 
         data['tutor_root'] = path
 
-    with open(info_file_path, 'w') as info_file:
+    with open(info_file_path, 'w', encoding='utf-8') as info_file:
         json.dump(data, info_file, indent=4)
 
 

@@ -16,9 +16,11 @@ def get_version(*file_paths):
                    version string
     """
     filename = os.path.join(os.path.dirname(__file__), *file_paths)
-    version_file = open(filename).read()
-    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
-                              version_file, re.M)
+
+    with open(filename, 'r', encoding='utf-8') as version_file:
+        version_file = version_file.read()
+        version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                                  version_file, re.M)
     if version_match:
         return version_match.group(1)
     raise RuntimeError('Unable to find version string.')
@@ -33,10 +35,11 @@ def load_requirements(*requirements_paths):
     """
     requirements = set()
     for path in requirements_paths:
-        requirements.update(
-            line.split('#')[0].strip() for line in open(path).readlines()
-            if is_requirement(line.strip())
-        )
+        with open(path, 'r', encoding='utf-8') as requirements_file:
+            requirements.update(
+                line.split('#')[0].strip() for line in requirements_file.readlines()
+                if is_requirement(line.strip())
+            )
     return list(requirements)
 
 
@@ -59,8 +62,11 @@ if sys.argv[-1] == 'tag':
     os.system("git push --tags")
     sys.exit()
 
-README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
-CHANGELOG = open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.md')).read()
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r', encoding='utf-8') as readme_file:
+    README = readme_file.read()
+
+with open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.md'), 'r', encoding='utf-8') as changelog_file:
+    CHANGELOG = changelog_file.read()
 
 setup(
     name='stack-builder',
