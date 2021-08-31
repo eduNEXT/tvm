@@ -9,3 +9,4 @@ pydocstyle
 coverage
 pytest
 pudb
+-e .

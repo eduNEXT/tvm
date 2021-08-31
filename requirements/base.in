@@ -4,3 +4,5 @@
 Click
 requests
 jinja2
+pyyaml
+GitPython
