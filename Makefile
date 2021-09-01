@@ -51,5 +51,9 @@ test: ## run unitary tests and meassure coverage
 	coverage run -m pytest
 	coverage report -m --fail-under=45
 
+autocomplete:
+	@_STACK_COMPLETE=bash_source stack > ~/.ednx-stack-complete.sh
+	@echo 'Now run: echo ". ~/.ednx-stack-complete.sh" >> ~/.bashrc'
+
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."
