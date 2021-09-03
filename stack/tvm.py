@@ -134,7 +134,7 @@ def install(force: bool, version: str):
     zipball_url = target.get('zipball_url')
     zipball_filename = f'{TVM_PATH}/{version}.zip'
     stream = requests.get(zipball_url, stream=True)
-    with open(zipball_filename, 'wb', encoding='utf-8') as target_file:
+    with open(zipball_filename, 'wb') as target_file:
         for chunk in stream.iter_content(chunk_size=256):
             target_file.write(chunk)
 
@@ -269,17 +269,35 @@ def get_env_by_tutor_version(version):
     return f'{TVM_PATH}/{version}/venv'
 
 
+def run_on_tutor_switcher(options):
+    """Run commands through the current tutor + config file."""
+    options = " ".join(options)
+    result = subprocess.run(f'{TVM_PATH}/tutor_switcher {options}',
+                            shell=True, check=True,
+                            executable='/bin/bash',
+                            capture_output=True)
+    return result.stdout
+
+
+def run_on_tutor_venv(cmd, options, version=None):
+    """Run commands on the virtualenv where this tutor is installed."""
+    if not version:
+        version = get_active_version()
+    target_venv = get_env_by_tutor_version(version)
+    options = " ".join(options)
+    result = subprocess.run(f'source {target_venv}/bin/activate;'
+                            f'{cmd} {options}; deactivate',
+                            shell=True, check=True,
+                            executable='/bin/bash',
+                            capture_output=True)
+    return result.stdout
+
+
 @click.command(name="pip", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def pip(options):
     """Use the package installer pip in current tutor version."""
-    version = get_active_version()
-    target_venv = get_env_by_tutor_version(version)
-    options = " ".join(options)
-    subprocess.run(f'source {target_venv}/bin/activate;'
-                   f'pip {options}; deactivate',
-                   shell=True, check=True,
-                   executable='/bin/bash')
+    click.echo(run_on_tutor_venv('pip', options))
 
 
 @click.group(name="plugins")
@@ -297,14 +315,11 @@ def list_plugins():
         if version == active:
             click.echo(click.style(f"{version} < -- active", fg='green'))
         else:
-            click.echo(click.style(version, fg='yellow'))
-        target_venv = get_env_by_tutor_version(version)
-        subprocess.run(f'source {target_venv}/bin/activate;'
-                       f'tutor plugins list; deactivate',
-                       shell=True, check=True,
-                       executable='/bin/bash')
+            click.echo(click.style(version, fg='green'))
 
-        click.echo('')
+        click.echo(run_on_tutor_venv('tutor', ['plugins', 'list'], version=version))
+
+    click.echo('Note: the disabled notice depends on the active strain configuration.')
 
 
 tvm_command.add_command(list_versions)

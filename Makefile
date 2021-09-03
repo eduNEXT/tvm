@@ -49,7 +49,7 @@ requirements: ## install development environment requirements
 
 test: ## run unitary tests and meassure coverage
 	coverage run -m pytest
-	coverage report -m --fail-under=45
+	coverage report -m --fail-under=55
 
 autocomplete:
 	@_STACK_COMPLETE=bash_source stack > ~/.ednx-stack-complete.sh
