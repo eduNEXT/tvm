@@ -1,6 +1,7 @@
 """Tutor version manager, inspired in nvm for node."""
 import datetime
 import json
+import logging
 import os
 import pathlib
 import re
@@ -14,6 +15,8 @@ from distutils.version import LooseVersion
 import click
 import requests
 from jinja2 import Template
+
+log = logging.getLogger(__name__)
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path().resolve() / '.tvm'
@@ -285,12 +288,17 @@ def run_on_tutor_venv(cmd, options, version=None):
         version = get_active_version()
     target_venv = get_env_by_tutor_version(version)
     options = " ".join(options)
-    result = subprocess.run(f'source {target_venv}/bin/activate;'
-                            f'{cmd} {options}; deactivate',
-                            shell=True, check=True,
-                            executable='/bin/bash',
-                            capture_output=True)
-    return result.stdout
+    try:
+        result = subprocess.run(f'source {target_venv}/bin/activate &&'
+                                f'{cmd} {options} && deactivate',
+                                shell=True, check=True,
+                                executable='/bin/bash',
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        return result.stdout
+    except subprocess.CalledProcessError as ex:
+        log.exception('Error running venv commands: %s', ex.output)
+        sys.exit(1)
 
 
 @click.command(name="pip", context_settings={"ignore_unknown_options": True})
