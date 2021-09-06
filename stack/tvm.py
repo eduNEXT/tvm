@@ -1,7 +1,6 @@
 """Tutor version manager, inspired in nvm for node."""
 import datetime
 import json
-import logging
 import os
 import pathlib
 import re
@@ -15,8 +14,6 @@ from distutils.version import LooseVersion
 import click
 import requests
 from jinja2 import Template
-
-log = logging.getLogger(__name__)
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path().resolve() / '.tvm'
@@ -297,7 +294,11 @@ def run_on_tutor_venv(cmd, options, version=None):
                                 stderr=subprocess.STDOUT)
         return result.stdout
     except subprocess.CalledProcessError as ex:
-        log.exception('Error running venv commands: %s', ex.output)
+        click.echo(click.style(
+            f'Error running venv commands: {ex.output}',
+            fg='red',
+        ))
+        click.echo(ex)
         sys.exit(1)
 
 
