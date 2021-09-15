@@ -1,6 +1,7 @@
 """Manage the tutor_root and tutor environments."""
 import json
 import pathlib
+import os
 
 import click
 
@@ -10,6 +11,17 @@ from stack.tvm import TVM_PATH, set_switch_from_file, setup_tvm
 @click.group(name="config", short_help="Manage tutor configurations and distribution strains")
 def config_command() -> None:
     """Hold the main wrapper for the `stack config` command."""
+
+
+def get_active_root() -> str:
+    """Read the current active root config."""
+    info_file_path = f'{TVM_PATH}/current_bin.json'
+
+    if os.path.exists(info_file_path):
+        with open(info_file_path, 'r', encoding='utf-8') as info_file:
+            data = json.load(info_file)
+        return data.get('tutor_root', 'Invalid config path')
+    return 'No active config applied'
 
 
 def set_active_root(path) -> None:

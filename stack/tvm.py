@@ -269,13 +269,13 @@ def get_env_by_tutor_version(version):
     return f'{TVM_PATH}/{version}/venv'
 
 
-def run_on_tutor_switcher(options):
+def run_on_tutor_switcher(options, capture_output=True):
     """Run commands through the current tutor + config file."""
     options = " ".join(options)
     result = subprocess.run(f'{TVM_PATH}/tutor_switcher {options}',
                             shell=True, check=True,
                             executable='/bin/bash',
-                            capture_output=True)
+                            capture_output=capture_output)
     return result.stdout
 
 
