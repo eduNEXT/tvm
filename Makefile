@@ -53,6 +53,8 @@ test: ## run unitary tests and meassure coverage
 
 autocomplete:
 	@_STACK_COMPLETE=bash_source stack > ~/.ednx-stack-complete.sh
+	@_STRAIN_COMPLETE=bash_source strain >> ~/.ednx-stack-complete.sh
+	@_TVM_COMPLETE=bash_source tvm >> ~/.ednx-stack-complete.sh
 	@echo 'Now run: echo ". ~/.ednx-stack-complete.sh" >> ~/.bashrc'
 
 selfcheck: ## check that the Makefile is well-formed
