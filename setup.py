@@ -94,6 +94,8 @@ setup(
     entry_points={
         'console_scripts': [
             'stack = stack.cli:main',
+            'strain = stack.cli:strain_command',
+            'tvm = stack.cli:tvm_command',
         ],
     },
 )
