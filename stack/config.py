@@ -1,7 +1,7 @@
 """Manage the tutor_root and tutor environments."""
 import json
-import pathlib
 import os
+import pathlib
 
 import click
 
