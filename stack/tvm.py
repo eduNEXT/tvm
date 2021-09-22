@@ -152,7 +152,7 @@ def install(force: bool, version: str):
 
     # Install tutor
     subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-                   f'pip install {TVM_PATH}/{version}/overhangio-tutor-*/',
+                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
                    shell=True, check=True,
                    executable='/bin/bash')
 
