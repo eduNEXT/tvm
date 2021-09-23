@@ -252,7 +252,7 @@ def install_global(make_global) -> None:
         except PermissionError:
             subprocess.call(['sudo', 'ln', '-s', f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor'])
         except FileExistsError:
-            pass
+            click.echo('There is already a file at: /usr/local/bin/tutor')
 
 
 @click.command(name="use")
