@@ -8,7 +8,11 @@ import click
 from stack.tvm import TVM_PATH, set_switch_from_file, setup_tvm
 
 
-@click.group(name="config", short_help="Manage tutor configurations and distribution strains")
+@click.group(
+    name="config",
+    short_help="Manage tutor configurations and distribution strains",
+    context_settings={"help_option_names": ["--help", "-h", "help"]}
+)
 def config_command() -> None:
     """Hold the main wrapper for the `stack config` command."""
 
