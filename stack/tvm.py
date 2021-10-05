@@ -19,7 +19,11 @@ VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path().resolve() / '.tvm'
 
 
-@click.group(name="tvm", short_help="Tutor Version Manager")
+@click.group(
+    name="tvm",
+    short_help="Tutor Version Manager",
+    context_settings={"help_option_names": ["--help", "-h", "help"]}
+)
 def tvm_command() -> None:
     """Hold the main wrapper for the `stack tvm` command."""
 
