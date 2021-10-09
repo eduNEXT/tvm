@@ -13,6 +13,7 @@ from distutils.version import LooseVersion
 
 import click
 import requests
+from click.shell_completion import CompletionItem
 from jinja2 import Template
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
@@ -26,6 +27,17 @@ TVM_PATH = pathlib.Path().resolve() / '.tvm'
 )
 def tvm_command() -> None:
     """Hold the main wrapper for the `stack tvm` command."""
+
+
+class TutorVersionType(click.ParamType):
+    """Provide autocomplete functionability for tutor versions."""
+
+    def shell_complete(self, ctx, param, incomplete):
+        """Provide autocomplete for shell."""
+        return [
+            CompletionItem(name)
+            for name in get_local_versions() if name.startswith(incomplete)
+        ]
 
 
 def validate_version(ctx, param, value):  # pylint: disable=unused-argument
@@ -170,7 +182,7 @@ def do_uninstall(version: str):
 
 
 @click.command(name="uninstall")
-@click.argument('version')
+@click.argument('version', type=TutorVersionType())
 def uninstall(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
     do_uninstall(version=version)
@@ -260,7 +272,7 @@ def install_global(make_global) -> None:
 
 
 @click.command(name="use")
-@click.argument('version', callback=validate_version_installed)
+@click.argument('version', callback=validate_version_installed, type=TutorVersionType())
 def use(version: str):
     """Configure the path to use VERSION."""
     setup_tvm()
