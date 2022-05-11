@@ -35,8 +35,8 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 
 quality: ## check coding style with pycodestyle and pylint
 	pylint stack *.py
-	pycodestyle stack docs *.py
-	pydocstyle stack docs *.py
+	pycodestyle stack *.py
+	pydocstyle stack *.py
 	isort --check-only --diff --recursive stack *.py
 	python setup.py bdist_wheel
 	make selfcheck
@@ -49,11 +49,10 @@ requirements: ## install development environment requirements
 
 test: ## run unitary tests and meassure coverage
 	coverage run -m pytest
-	coverage report -m --fail-under=62
+	coverage report -m --fail-under=37
 
 autocomplete:
 	@_STACK_COMPLETE=bash_source stack > ~/.ednx-stack-complete.sh
-	@_STRAIN_COMPLETE=bash_source strain >> ~/.ednx-stack-complete.sh
 	@_TVM_COMPLETE=bash_source tvm >> ~/.ednx-stack-complete.sh
 	@echo 'Now run: echo ". ~/.ednx-stack-complete.sh" >> ~/.bashrc'
 
