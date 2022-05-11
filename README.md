@@ -63,3 +63,9 @@ stack tvm pip freeze
 stack tvm plugins list
 ```
 Lista los plugins por cada versión instalada
+
+
+# License
+
+
+The code in this repository is licensed under version 3 of the AGPL unless otherwise noted. Please see the [LICENSE](https://github.com/edunext/tvm/blob/main/LICENSE) file for details.
