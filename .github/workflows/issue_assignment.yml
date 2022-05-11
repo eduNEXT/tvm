@@ -1,0 +1,16 @@
+name: Issue assignment
+
+on:
+    issues:
+        types: [opened]
+
+jobs:
+    auto-assign:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 'Auto-assign issue'
+              uses: pozil/auto-assign-issue@v1.5.0
+              with:
+                repo-token: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+                teams: tvm-maintainers
+                numOfAssignee: 2

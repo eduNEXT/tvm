@@ -56,6 +56,11 @@ To list the tutor's plugins for each tutor version you should call
 tvm plugins list
 ```
 
+# How to Contribute
+Contributions are welcome!. See our [CONTRIBUTING](https://github.com/edunext/tvm/blob/master/CONTRIBUTING.md)
+file for more information – it also contains guidelines for how to maintain high code quality, which will make your
+contribution more likely to be accepted.
+
 # License
 The code in this repository is licensed under version 3 of the AGPL unless
 otherwise noted. Please see the [LICENSE](https://github.com/edunext/tvm/blob/main/LICENSE) file for details.
