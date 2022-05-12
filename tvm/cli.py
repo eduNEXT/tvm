@@ -1,4 +1,4 @@
-"""Tutor version manager, inspired in nvm for node."""
+"""Entry point for all the `tvm *` commands."""
 import datetime
 import json
 import os
@@ -14,10 +14,17 @@ from distutils.version import LooseVersion
 import click
 import requests
 from click.shell_completion import CompletionItem
-from jinja2 import Template
+
+from tvm import __version__
+from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path().resolve() / '.tvm'
+
+
+def main() -> None:
+    """Hold all the commands in a group."""
+    cli()
 
 
 @click.group(
@@ -25,8 +32,9 @@ TVM_PATH = pathlib.Path().resolve() / '.tvm'
     short_help="Tutor Version Manager",
     context_settings={"help_option_names": ["--help", "-h", "help"]}
 )
-def tvm_command() -> None:
-    """Hold the main wrapper for the `stack tvm` command."""
+@click.version_option(version=__version__)
+def cli() -> None:
+    """Define the main `tvm` group."""
 
 
 class TutorVersionType(click.ParamType):
@@ -126,25 +134,25 @@ def install(force: bool, version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
     setup_tvm()
 
+    # Find the target version info
+    api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
+
+    try:
+        target = [x for x in api_info if x.get('name') == version][0]
+    except IndexError:
+        raise click.UsageError(f'Could not find target: {version}') from IndexError
+
     if force:
         do_uninstall(version=version)
 
     try:
         os.mkdir(f'{TVM_PATH}/{version}')
-    except FileExistsError as error:
-        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.',
-                                           fg='red')) from error
-
-    # Find the target version info
-    api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
-    try:
-        target = [x for x in api_info if x.get('name') == version][0]
-        # print target data to dir
         target['installation_date'] = str(datetime.datetime.now())
         with open(f'{TVM_PATH}/{version}/info.json', 'w', encoding='utf-8') as info_file:
             json.dump(target, info_file, indent=4)
-    except IndexError as error:
-        raise click.UsageError(f'Could not find target: {version}') from error
+    except FileExistsError as error:
+        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.',
+                                           fg='red')) from error
 
     # Get the code in zip format
     zipball_url = target.get('zipball_url')
@@ -218,9 +226,6 @@ def set_switch_from_file() -> None:
     with open(info_file_path, 'r', encoding='utf-8') as info_file:
         data = json.load(info_file)
 
-    with open('stack/templates/tutor_switcher.j2', encoding='utf-8') as template:
-        switcher = Template(template.read())
-
     try:
         config_name = '/'.join(data['tutor_root'].split('/')[-3:])
     except:  # pylint: disable=bare-except
@@ -235,7 +240,7 @@ def set_switch_from_file() -> None:
 
     switcher_file = f'{TVM_PATH}/tutor_switcher'
     with open(switcher_file, mode='w', encoding='utf-8') as of_text:
-        of_text.write(switcher.render(**context))
+        of_text.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
 
     # set execute permissions
     os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
@@ -347,11 +352,14 @@ def list_plugins():
     click.echo('Note: the disabled notice depends on the active strain configuration.')
 
 
-tvm_command.add_command(list_versions)
-tvm_command.add_command(install)
-tvm_command.add_command(uninstall)
-tvm_command.add_command(use)
-tvm_command.add_command(install_global)
-tvm_command.add_command(pip)
-tvm_command.add_command(plugins)
+if __name__ == "__main__":
+    main()
+
+cli.add_command(list_versions)
+cli.add_command(install)
+cli.add_command(uninstall)
+cli.add_command(use)
+cli.add_command(install_global)
+cli.add_command(pip)
+cli.add_command(plugins)
 plugins.add_command(list_plugins)

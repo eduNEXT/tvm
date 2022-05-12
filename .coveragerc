@@ -1,6 +1,6 @@
 [run]
 branch = True
 data_file = .coverage
-source=stack
+source=tvm
 omit =
     tests
