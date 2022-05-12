@@ -4,7 +4,7 @@ import os
 import re
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def get_version(*file_paths):
@@ -75,7 +75,7 @@ setup(
     long_description=README + '\n\n' + CHANGELOG,
     author='eduNEXT',
     author_email='felipe.montoya@edunext.co',
-    packages=['tvm'],
+    packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     python_requires=">=3.8",
