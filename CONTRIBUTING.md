@@ -8,7 +8,7 @@ If you do not have the ability to develop the idea but you need that solution, y
 Got an idea for how to improve the codebase? Fantastic, we'd love to hear about it! Before you dive in and spend a lot of time and effort making a pull request, it's a good idea to discuss your idea with other interested developers and/or the eduNEXT product team. You may get some valuable feedback that changes how you think about your idea, or you may find other developers who have the same idea and want to work together.
 
 ### Repository Discussions
-If you've got an idea for anew feature, please start a discussion in the [__ideas__](https://github.com/eduNEXT/tvm/discussions/categories/ideas) category of the github repository discussion to get feedback from the community about your idea.
+If you've got an idea for a new feature, please start a discussion in the [__ideas__](https://github.com/eduNEXT/tvm/discussions/categories/ideas) category of the github repository discussion to get feedback from the community about your idea.
 
 ## Step 1: Fork, Commit, and Pull Request
 __This confirms that you have the authority to contribute the code in the pull request and ensures that eduNEXT can re-license it__
