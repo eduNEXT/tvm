@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""Package metadata for stack."""
+"""Package metadata for tvm."""
 import os
 import re
 import sys
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def get_version(*file_paths):
@@ -54,7 +54,7 @@ def is_requirement(line):
     return line and not line.startswith(('-r', '#', '-e', 'git+', '-c'))
 
 
-VERSION = get_version('stack', '__init__.py')
+VERSION = get_version('tvm', '__init__.py')
 
 if sys.argv[-1] == 'tag':
     print("Tagging the version on github:")
@@ -69,15 +69,13 @@ with open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.md'), 'r', encoding
     CHANGELOG = changelog_file.read()
 
 setup(
-    name='stack-builder',
+    name='tutor-version-manager',
     version=VERSION,
     description="""Helps you keep your cool when creating dozens of open edX and eduNEXT environments""",
     long_description=README + '\n\n' + CHANGELOG,
     author='eduNEXT',
     author_email='felipe.montoya@edunext.co',
-    packages=[
-        'stack',
-    ],
+    packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
     python_requires=">=3.8",
@@ -93,9 +91,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'stack = stack.cli:main',
-            'strain = stack.cli:strain_command',
-            'tvm = stack.cli:tvm_command',
+            'tvm = tvm.cli:main',
         ],
     },
 )
