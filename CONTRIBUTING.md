@@ -21,10 +21,10 @@ GitHub has some great documentation on [how to fork a git repository](https://do
 - Repository actions are passing without problems.
 - Good Pull Request Cover Letter [How to do it](https://blog.alphasmanifesto.com/2016/07/11/how-to-create-a-good-pull-request/)
 
-## Step 4: Code Review by Team Distro Member(s)
-A team distro member will read the description of your pull request. If the descriptions is understandable and your pull request meets the requirements listed in the contributor documentation (__read Meet PR Requirements__), then it will be reviewed by one or more core commiters.
+## Step 4: Code Review by team TVM Maintainers member(s)
+A team tvm maintainers member will read the description of your pull request. If the descriptions is understandable and your pull request meets the requirements listed in the contributor documentation (__read Meet PR Requirements__), then it will be reviewed by one or more core commiters.
 
 Once the code review process has started, please be responsive to comments on the pull request, so we can keep the review process moving forward. If you are unable to respond for a few days, that's fine, but please add a comment informing us of that -- otherwise, it looks like you're abandoning your work!
 
 ## Step 5: Merge!
-Once the team distro members are satisfied that your pull request is ready to go, one of them will merge it for you. Congrats!
+Once the team tvm maintainers members are satisfied that your pull request is ready to go, one of them will merge it for you. Congrats!
