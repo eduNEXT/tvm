@@ -11,6 +11,6 @@ jobs:
             - name: 'Auto-assign issue'
               uses: pozil/auto-assign-issue@v1.5.0
               with:
-                repo-token: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+                repo-token: ${{ secrets.MEMBER_ALLOCATOR_TOKEN }}
                 teams: tvm-maintainers
                 numOfAssignee: 2
