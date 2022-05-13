@@ -2,10 +2,6 @@
 TVM is the acronym of Tutor Version Manager. It manages Tutor versions and enables switching between them.
 
 # Installing TVM
-## Pypi
-```bash
-pip install tutor-version-manager
-```
 
 ## GitHub
 ```bash
