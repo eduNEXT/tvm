@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import pathlib
+import random
 import re
 import shutil
 import stat
@@ -12,7 +13,6 @@ import sys
 import zipfile
 from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
-import random
 
 import click
 import requests
@@ -53,6 +53,7 @@ class TutorVersionType(click.ParamType):
 
 
 def version_is_valid(value):
+    """Raise BadParameter if the value is not a tutor version."""
     result = re.match(r'^v([0-9]+)\.([0-9]+)\.([0-9]+)$', value)
     if not result:
         raise click.BadParameter("format must be 'vX.Y.Z'")
@@ -72,7 +73,8 @@ def get_local_versions():
     return []
 
 
-def version_is_installed(value):
+def version_is_installed(value) -> bool:
+    """Return false if the value is not installed."""
     version_is_valid(value)
     local_versions = get_local_versions()
     return value in local_versions
@@ -378,6 +380,7 @@ def projects() -> None:
 
 
 def create_project(project: str) -> None:
+    """Duplicate the version directory and rename it."""
     if not os.path.exists(f"{TVM_PATH}/{project}"):
         tutor_version = project.split("@")[0]
         tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
@@ -441,7 +444,7 @@ def init(name: str = None, version: str = None):
 
         create_project(project=version)
     else:
-        raise click.UsageError(f'There is already a project initiated.') from IndexError
+        raise click.UsageError('There is already a project initiated.') from IndexError
 
 
 if __name__ == "__main__":
