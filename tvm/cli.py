@@ -254,6 +254,9 @@ def install_venv() -> None:
         os.symlink(f'{TVM_PATH}/tutor_switcher', venv_tutor)
     except FileExistsError:
         pass
+    except PermissionError:
+        click.echo(
+            click.style('To set up tvm local is necessary that tvm had been installed in a virtualenv.', fg='red'))
     else:
         click.echo(click.style(
             'Re-activate your virtualenv for changes to take effect', fg='yellow'))
@@ -265,9 +268,10 @@ def install_global(make_global) -> None:
     """Make the switcher file to anyone in the system."""
     setup_tvm()
     set_switch_from_file()
-    install_venv()
 
-    if make_global:
+    if not make_global:
+        install_venv()
+    else:
         try:
             os.symlink(f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor')
         except PermissionError:
