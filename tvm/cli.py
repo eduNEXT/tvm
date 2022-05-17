@@ -6,10 +6,13 @@ import pathlib
 import re
 import shutil
 import stat
+import string
 import subprocess
 import sys
 import zipfile
+from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
+import random
 
 import click
 import requests
@@ -17,6 +20,7 @@ from click.shell_completion import CompletionItem
 
 from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
+from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path().resolve() / '.tvm'
@@ -48,13 +52,17 @@ class TutorVersionType(click.ParamType):
         ]
 
 
-def validate_version(ctx, param, value):  # pylint: disable=unused-argument
-    """Raise BadParameter if the value is not a tutor version."""
+def version_is_valid(value):
     result = re.match(r'^v([0-9]+)\.([0-9]+)\.([0-9]+)$', value)
     if not result:
         raise click.BadParameter("format must be 'vX.Y.Z'")
 
     return value
+
+
+def validate_version(ctx, param, value):  # pylint: disable=unused-argument
+    """Raise BadParameter if the value is not a tutor version."""
+    return version_is_valid(value)
 
 
 def get_local_versions():
@@ -64,15 +72,18 @@ def get_local_versions():
     return []
 
 
+def version_is_installed(value):
+    version_is_valid(value)
+    local_versions = get_local_versions()
+    return value in local_versions
+
+
 def validate_version_installed(ctx, param, value):  # pylint: disable=unused-argument
     """Raise BadParameter if the value is not a tutor version."""
-    validate_version(ctx, param, value)
-
-    local_versions = get_local_versions()
-    if value not in local_versions:
+    is_installed = version_is_installed(value)
+    if not is_installed:
         raise click.BadParameter("You must install the version before using it.\n\n"
-                                 "Use `stack tvm list` for available versions.")
-
+                                 "Use `tvm list` for available versions.")
     return value
 
 
@@ -356,6 +367,83 @@ def list_plugins():
     click.echo('Note: the disabled notice depends on the active strain configuration.')
 
 
+@click.group(
+    name="project",
+    short_help="Tutor Environment Manager",
+    context_settings={"help_option_names": ["--help", "-h", "help"]}
+)
+@click.version_option(version=__version__)
+def projects() -> None:
+    """Hold the main wrapper for the `tvm project` command."""
+
+
+def create_project(project: str) -> None:
+    if not os.path.exists(f"{TVM_PATH}/{project}"):
+        tutor_version = project.split("@")[0]
+        tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
+        tvm_project = f"{TVM_PATH}/{project}"
+        copy_tree(tutor_version_folder, tvm_project)
+
+
+@click.command(name="init")
+@click.argument('name', required=False)
+@click.argument('version', required=False)
+def init(name: str = None, version: str = None):
+    """Configure a new tvm project in the current path."""
+    if not version:
+        version = get_active_version()
+
+    if not version_is_installed(version):
+        raise click.UsageError(f'Could not find target: {version}')
+
+    if not name:
+        letters = string.ascii_letters
+        name = ''.join(random.choice(letters) for i in range(10))
+
+    version = f"{version}@{name}"
+
+    tvm_project_folder = pathlib.Path().resolve()
+    tvm_environment = tvm_project_folder / '.tvm'
+
+    if not os.path.exists(tvm_environment):
+        pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
+
+        # Create config json
+        tvm_project_config_file = f"{tvm_environment}/config.json"
+        data = {
+            "version": f"{version}",
+            "tutor_root": f"{tvm_project_folder}",
+            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
+        }
+        with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
+            json.dump(data, info_file, indent=4)
+
+        # Create activate script
+        context = {
+            "version": f"{version}",
+            "tutor_root": f"{tvm_project_folder}",
+            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
+        }
+        activate_script = f"{tvm_environment}/bin/activate"
+        with open(activate_script, 'w', encoding='utf-8') as activate_file:
+            activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
+
+        # Create tutor switcher
+        context = {
+            'version': data.get('version', None),
+            'tvm': f"{TVM_PATH}",
+        }
+        tutor_file = f"{tvm_environment}/bin/tutor"
+        with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
+            switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
+        # set execute permissions
+        os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+
+        create_project(project=version)
+    else:
+        raise click.UsageError(f'There is already a project initiated.') from IndexError
+
+
 if __name__ == "__main__":
     main()
 
@@ -365,5 +453,7 @@ cli.add_command(uninstall)
 cli.add_command(use)
 cli.add_command(install_global)
 cli.add_command(pip)
+cli.add_command(projects)
+projects.add_command(init)
 cli.add_command(plugins)
 plugins.add_command(list_plugins)

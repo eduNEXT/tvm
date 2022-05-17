@@ -3,7 +3,7 @@ import pytest
 from click.exceptions import BadParameter
 from click.testing import CliRunner
 
-from tvm.cli import cli, install, uninstall, validate_version
+from tvm.cli import cli, install, uninstall, validate_version, projects
 
 
 def test_should_return_all_tvm_cli_commands():
@@ -33,3 +33,11 @@ def test_should_fail_if_version_is_not_installed():
     runner = CliRunner()
     result = runner.invoke(uninstall, ["v0.0.99"])
     assert 'Nothing to uninstall' in result.stdout
+
+
+def test_should_return_all_tvm_project_commands():
+    runner = CliRunner()
+    result = runner.invoke(projects)
+
+    assert result.exit_code == 0
+    assert ' init ' in result.output
