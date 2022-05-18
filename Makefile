@@ -35,7 +35,7 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 
 quality: ## check coding style with pycodestyle and pylint
 	pylint tvm *.py
-	pycodestyle tvm *.py
+	pycodestyle tvm *.py --exclude='*/templates/*'
 	pydocstyle tvm *.py
 	isort --check-only --diff tvm *.py
 

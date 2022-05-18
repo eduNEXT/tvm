@@ -1,6 +1,6 @@
 
 [MASTER]
-ignore = migrations
+ignore = migrations, templates
 persistent = yes
 
 [MESSAGES CONTROL]
