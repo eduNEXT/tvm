@@ -19,7 +19,7 @@ from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
-TVM_PATH = pathlib.Path().resolve() / '.tvm'
+TVM_PATH = pathlib.Path.home() / '.tvm'
 
 
 def main() -> None:
@@ -95,6 +95,16 @@ def setup_tvm():
         }
         with open(info_file_path, 'w', encoding='utf-8') as info_file:
             json.dump(data, info_file, indent=4)
+
+    set_switch_from_file()
+
+    tutor_switcher = f'{TVM_PATH}/tutor_switcher'
+    try:
+        os.symlink(tutor_switcher, '/usr/local/bin/tutor')
+    except PermissionError:
+        subprocess.call(['sudo', 'ln', '-s', tutor_switcher, '/usr/local/bin/tutor'])
+    except FileExistsError:
+        pass
 
 
 @click.command(name="list")
@@ -246,40 +256,6 @@ def set_switch_from_file() -> None:
     os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
-def install_venv() -> None:
-    """Make the switcher file available to the virtualenv path."""
-    # link from the venv
-    venv_tutor = pathlib.Path(sys.executable).parent.joinpath('tutor').resolve()
-    try:
-        os.symlink(f'{TVM_PATH}/tutor_switcher', venv_tutor)
-    except FileExistsError:
-        pass
-    except PermissionError:
-        click.echo(
-            click.style('To set up tvm local is necessary that tvm had been installed in a virtualenv.', fg='red'))
-    else:
-        click.echo(click.style(
-            'Re-activate your virtualenv for changes to take effect', fg='yellow'))
-
-
-@click.command(name="setup")
-@click.option('-g', '--global', 'make_global', is_flag=True, help='Make the tutor command available to the cli')
-def install_global(make_global) -> None:
-    """Make the switcher file to anyone in the system."""
-    setup_tvm()
-    set_switch_from_file()
-
-    if not make_global:
-        install_venv()
-    else:
-        try:
-            os.symlink(f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor')
-        except PermissionError:
-            subprocess.call(['sudo', 'ln', '-s', f'{TVM_PATH}/tutor_switcher', '/usr/local/bin/tutor'])
-        except FileExistsError:
-            click.echo('There is already a file at: /usr/local/bin/tutor')
-
-
 @click.command(name="use")
 @click.argument('version', callback=validate_version_installed, type=TutorVersionType())
 def use(version: str):
@@ -363,7 +339,6 @@ cli.add_command(list_versions)
 cli.add_command(install)
 cli.add_command(uninstall)
 cli.add_command(use)
-cli.add_command(install_global)
 cli.add_command(pip)
 cli.add_command(plugins)
 plugins.add_command(list_plugins)

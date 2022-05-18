@@ -14,8 +14,9 @@ def test_should_return_all_tvm_cli_commands():
     assert ' install ' in result.output
     assert ' uninstall ' in result.output
     assert ' list ' in result.output
-    assert ' setup ' in result.output
     assert ' use ' in result.output
+    assert ' pip ' in result.output
+    assert ' plugins ' in result.output
 
 
 def test_should_fail_if_format_version_is_not_valid():
