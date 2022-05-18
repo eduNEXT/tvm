@@ -229,6 +229,14 @@ def get_active_version() -> str:
     return 'No active version installed'
 
 
+def get_project_version(tvm_project_path) -> str:
+    """Read the current active version from the json/bash switcher."""
+    info_file_path = f'{tvm_project_path}/config.json'
+    with open(info_file_path, 'r', encoding='utf-8') as info_file:
+        data = json.load(info_file)
+    return data.get('version')
+
+
 def set_active_version(version) -> None:
     """Set the active version in the json to VERSION."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
@@ -423,6 +431,17 @@ def init(name: str = None, version: str = None):
         raise click.UsageError('There is already a project initiated.') from IndexError
 
 
+@click.command(name="install", context_settings={"ignore_unknown_options": True})
+@click.argument('options', nargs=-1, type=click.UNPROCESSED)
+def install_plugin(options):
+    """Use the package installer pip in current tutor version."""
+    options = list(options)
+    options.insert(0, "install")
+    if "TVM_PROJECT_ENV" in os.environ:
+        run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
+    run_on_tutor_venv('pip', options)
+
+
 if __name__ == "__main__":
     main()
 
@@ -435,3 +454,4 @@ cli.add_command(projects)
 projects.add_command(init)
 cli.add_command(plugins)
 plugins.add_command(list_plugins)
+plugins.add_command(install_plugin)

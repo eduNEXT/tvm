@@ -11,6 +11,10 @@ fi
 tvmoff () {
     # reset old environment variables
     # ! [ -z ${VAR+_} ] returns true if VAR is declared at all
+    if ! [ -z "${TVM_PROJECT_ENV:+_}" ] ; then
+        unset TVM_PROJECT_ENV
+    fi
+
     if ! [ -z "${_TVM_OLD_VIRTUAL_PATH:+_}" ] ; then
         PATH="$_TVM_OLD_VIRTUAL_PATH"
         export PATH
