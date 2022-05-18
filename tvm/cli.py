@@ -121,6 +121,7 @@ def setup_tvm():
 
 
 def setup_version_virtualenv(version=None) -> None:
+    """Create virtualenv and install tutor cloned."""
     # Create virtualenv
     subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
                    shell=True, check=True,
