@@ -120,6 +120,19 @@ def setup_tvm():
         pass
 
 
+def setup_version_virtualenv(version=None) -> None:
+    # Create virtualenv
+    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
+                   shell=True, check=True,
+                   executable='/bin/bash')
+
+    # Install tutor
+    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
+                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
+                   shell=True, check=True,
+                   executable='/bin/bash')
+
+
 @click.command(name="list")
 @click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
 def list_versions(limit: int):
@@ -139,14 +152,24 @@ def list_versions(limit: int):
     version_names = list(set(api_versions + local_versions))
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
 
-    active = get_active_version()
+    project_version = None
+    if "TVM_PROJECT_ENV" in os.environ:
+        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+
+    global_active = get_active_version()
 
     for name in version_names:
         color = 'yellow'
         if name in local_versions:
             color = 'green'
-        if name == active:
-            name = f'{name} <-- active'
+        if name == global_active:
+            if project_version:
+                color = 'blue'
+                name = f'{name} (global)'
+            else:
+                name = f'{name} (active)'
+        if project_version and project_version == name:
+            name = f'{name} (active)'
         click.echo(click.style(name, fg=color))
 
 
@@ -192,16 +215,8 @@ def install(force: bool, version: str):
     # Delete artifact
     os.remove(zipball_filename)
 
-    # Create virtualenv
-    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-                   shell=True, check=True,
-                   executable='/bin/bash')
-
-    # Install tutor
-    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
-                   shell=True, check=True,
-                   executable='/bin/bash')
+    # Create virtualenv and install tutor
+    setup_version_virtualenv(version)
 
 
 def do_uninstall(version: str):
@@ -339,18 +354,29 @@ def plugins() -> None:
 @click.command(name="list")
 def list_plugins():
     """List installed plugins by tutor version."""
-    active = get_active_version()
+    project_version = None
+    if "TVM_PROJECT_ENV" in os.environ:
+        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+
+    global_active = get_active_version()
+
     local_versions = get_local_versions()
     for version in local_versions:
         version = str(version)
-        if version == active:
-            click.echo(click.style(f"{version} < -- active", fg='green'))
+
+        if version == global_active:
+            if project_version:
+                click.echo(click.style(f"{version} (global)", fg='blue'))
+            else:
+                click.echo(click.style(f"{version} (active)", fg='green'))
+        elif project_version and version == project_version:
+            click.echo(click.style(f"{version} (active)", fg='green'))
         else:
             click.echo(click.style(version, fg='green'))
 
         click.echo(run_on_tutor_venv('tutor', ['plugins', 'list'], version=version))
 
-    click.echo('Note: the disabled notice depends on the active strain configuration.')
+    click.echo('Note: the disabled notice depends on the active tutor configuration.')
 
 
 @click.group(
@@ -368,8 +394,12 @@ def create_project(project: str) -> None:
     if not os.path.exists(f"{TVM_PATH}/{project}"):
         tutor_version = project.split("@")[0]
         tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
+
         tvm_project = f"{TVM_PATH}/{project}"
         copy_tree(tutor_version_folder, tvm_project)
+
+        shutil.rmtree(f"{tvm_project}/venv")
+        setup_version_virtualenv(project)
 
 
 @click.command(name="init")
@@ -439,7 +469,8 @@ def install_plugin(options):
     options.insert(0, "install")
     if "TVM_PROJECT_ENV" in os.environ:
         run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
-    run_on_tutor_venv('pip', options)
+    else:
+        run_on_tutor_venv('pip', options)
 
 
 if __name__ == "__main__":
