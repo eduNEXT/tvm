@@ -47,7 +47,7 @@ tvmoff () {
 }
 # unset irrelevant variables
 tvmoff nondestructive
-TVM_PROJECT_ENV="$PWD/.tvm"
+TVM_PROJECT_ENV="{{ tutor_root }}/.tvm"
 export TVM_PROJECT_ENV
 _TVM_OLD_VIRTUAL_PATH="$PATH"
 PATH="$TVM_PROJECT_ENV/bin:$PATH"
