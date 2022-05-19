@@ -30,6 +30,19 @@ To switch between tutor versions you should call
 tvm use v<TUTOR_VERSION_INSTALLED>
 ```
 
+## Setting tutor root variables
+To set TUTOR_ROOT and TUTOR_PLUGINS_ROOT variables you should call
+
+```bash
+# TUTOR_ROOT=Current Working Directory and TUTOR_PLUGINS_ROOT=TUTOR_ROOT/plugins
+tvm config save .
+
+# TUTOR_ROOT=/home/user/tutor-test and TUTOR_PLUGINS_ROOT=TUTOR_ROOT/plugins
+tvm config save /home/user/tutor-test
+```
+If you want set a different TUTOR_PLUGINS_ROOT you should use
+the option tvm `config save . --plugins-root="PATH"`
+
 ## Installing a plugin in the current tutor version
 To install a tutor plugin in the current tutor version you should call
 
