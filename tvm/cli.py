@@ -495,6 +495,15 @@ def install_plugin(options):
     else:
         run_on_tutor_venv('pip', options)
 
+@click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
+@click.argument('options', nargs=-1, type=click.UNPROCESSED)
+def uninstall_plugin(options):
+    """Use the package installer pip in current tutor version."""
+    options = list(options)
+    options.insert(0,"uninstall")
+    options.append("-y")
+    click.echo(run_on_tutor_venv('pip', options))
+
 
 @click.group(
     name="config",
@@ -561,6 +570,7 @@ projects.add_command(init)
 cli.add_command(plugins)
 plugins.add_command(list_plugins)
 plugins.add_command(install_plugin)
+plugins.add_command(uninstall_plugin)
 cli.add_command(config)
 config.add_command(save)
 config.add_command(clear)
