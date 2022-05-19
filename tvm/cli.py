@@ -362,13 +362,6 @@ def run_on_tutor_venv(cmd, options, version=None):
         sys.exit(1)
 
 
-@click.command(name="pip", context_settings={"ignore_unknown_options": True})
-@click.argument('options', nargs=-1, type=click.UNPROCESSED)
-def pip(options):
-    """Use the package installer pip in current tutor version."""
-    click.echo(run_on_tutor_venv('pip', options))
-
-
 @click.group(name="plugins")
 def plugins() -> None:
     """Use plugins commands."""
@@ -555,7 +548,6 @@ cli.add_command(list_versions)
 cli.add_command(install)
 cli.add_command(uninstall)
 cli.add_command(use)
-cli.add_command(pip)
 cli.add_command(projects)
 projects.add_command(init)
 cli.add_command(plugins)
