@@ -13,6 +13,7 @@ import sys
 import zipfile
 from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
+from typing import Optional
 
 import click
 import requests
@@ -103,13 +104,14 @@ def setup_tvm():
     info_file_path = f'{TVM_PATH}/current_bin.json'
     if not os.path.exists(info_file_path):
         data = {
-            "active": None,
+            "version": None,
             "tutor_root": None,
+            "tutor_plugins_root": None,
         }
         with open(info_file_path, 'w', encoding='utf-8') as info_file:
             json.dump(data, info_file, indent=4)
 
-    set_switch_from_file()
+    set_switch_from_file(file=info_file_path)
 
     tutor_switcher = f'{TVM_PATH}/tutor_switcher'
     try:
@@ -241,7 +243,7 @@ def get_active_version() -> str:
     if os.path.exists(info_file_path):
         with open(info_file_path, 'r', encoding='utf-8') as info_file:
             data = json.load(info_file)
-        return data.get('active', 'Invalid active version')
+        return data.get('version', 'Invalid active version')
     return 'No active version installed'
 
 
@@ -253,35 +255,54 @@ def get_project_version(tvm_project_path) -> str:
     return data.get('version')
 
 
+def get_current_info(file: str = None) -> Optional[dict]:
+    """Get the JSON data from the config file."""
+    if not file:
+        if "TVM_PROJECT_ENV" in os.environ:
+            project = os.environ.get("TVM_PROJECT_ENV")
+            file = f"{project}/config.json"
+        else:
+            file = f'{TVM_PATH}/current_bin.json'
+
+    data = None
+    if os.path.exists(file):
+        with open(file, 'r', encoding='utf-8') as info_file:
+            data = json.load(info_file)
+    return data
+
+
+def put_current_info(data: dict, file: str = None) -> None:
+    """Update JSON data in the config file."""
+    if not file:
+        if "TVM_PROJECT_ENV" in os.environ:
+            project = os.environ.get("TVM_PROJECT_ENV")
+            file = f"{project}/config.json"
+        else:
+            file = f'{TVM_PATH}/current_bin.json'
+
+    if os.path.exists(file):
+        with open(file, 'w', encoding='utf-8') as info_file:
+            json.dump(data, info_file, indent=4)
+
+
 def set_active_version(version) -> None:
     """Set the active version in the json to VERSION."""
     info_file_path = f'{TVM_PATH}/current_bin.json'
 
-    with open(info_file_path, 'r', encoding='utf-8') as info_file:
-        data = json.load(info_file)
+    data = get_current_info(file=info_file_path)
+    data['version'] = version
 
-    data['active'] = version
-
-    with open(info_file_path, 'w', encoding='utf-8') as info_file:
-        json.dump(data, info_file, indent=4)
+    put_current_info(data=data, file=info_file_path)
 
 
-def set_switch_from_file() -> None:
+def set_switch_from_file(file: str = None) -> None:
     """Set the active version from the json into the switcher."""
-    info_file_path = f'{TVM_PATH}/current_bin.json'
-
-    with open(info_file_path, 'r', encoding='utf-8') as info_file:
-        data = json.load(info_file)
-
-    try:
-        config_name = '/'.join(data['tutor_root'].split('/')[-3:])
-    except:  # pylint: disable=bare-except
-        config_name = data.get('tutor_root', None)
+    data = get_current_info(file=file)
 
     context = {
-        'version': data.get('active', None),
+        'version': data.get('version', None),
         'tutor_root': data.get('tutor_root', None),
-        'config_name': config_name,
+        'tutor_plugins_root': data.get('tutor_plugins_root', None),
         'tvm': TVM_PATH,
     }
 
@@ -299,7 +320,8 @@ def use(version: str):
     """Configure the path to use VERSION."""
     setup_tvm()
     set_active_version(version)
-    set_switch_from_file()
+    file = f'{TVM_PATH}/current_bin.json'
+    set_switch_from_file(file=file)
 
 
 def get_env_by_tutor_version(version):
@@ -474,6 +496,58 @@ def install_plugin(options):
         run_on_tutor_venv('pip', options)
 
 
+@click.group(
+    name="config",
+    short_help="TVM config variables",
+    context_settings={"help_option_names": ["--help", "-h", "help"]}
+)
+@click.version_option(version=__version__)
+def config() -> None:
+    """Hold the main wrapper for the `tvm config` command."""
+
+
+@click.command(name="save", context_settings={"ignore_unknown_options": True})
+@click.option('--plugins-root', nargs=1, required=False, type=str)
+@click.argument('root', required=True, type=str)
+def save(root, plugins_root):
+    """
+    Set TUTOR_ROOT and TUTOR_PLUGINS_ROOT variables.
+
+    You should write "." to set up the Current Working Directory as TUTOR_ROOT.
+
+    TUTOR_PLUGINS_ROOT default is the TUTOR_ROOT/plugins.
+    """
+    if root == ".":
+        root = os.getcwd()
+    root = root.rstrip('/')
+
+    if not plugins_root:
+        plugins_root = f"{root}/plugins"
+    plugins_root = plugins_root.rstrip('/')
+
+    info_file_path = f'{TVM_PATH}/current_bin.json'
+    data = get_current_info(file=info_file_path)
+    data.update({
+        "tutor_root": root,
+        "tutor_plugins_root": plugins_root
+    })
+    put_current_info(data=data, file=info_file_path)
+    set_switch_from_file(file=info_file_path)
+
+
+@click.command(name="clear", context_settings={"ignore_unknown_options": True})
+def clear():
+    """Remove TUTOR_ROOT and TUTOR_PLUGINS_ROOT variables."""
+    info_file_path = f'{TVM_PATH}/current_bin.json'
+    data = get_current_info(file=info_file_path)
+    data.update({
+        "tutor_root": None,
+        "tutor_plugins_root": None
+    })
+    put_current_info(data=data, file=info_file_path)
+    set_switch_from_file(file=info_file_path)
+
+
 if __name__ == "__main__":
     main()
 
@@ -487,3 +561,6 @@ projects.add_command(init)
 cli.add_command(plugins)
 plugins.add_command(list_plugins)
 plugins.add_command(install_plugin)
+cli.add_command(config)
+config.add_command(save)
+config.add_command(clear)
