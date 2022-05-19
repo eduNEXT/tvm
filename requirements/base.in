@@ -1,7 +1,7 @@
 # Core requirements for using this application
 -c constraints.txt
 
-Click
+Click>=8.0.1
 requests
 jinja2
 pyyaml
