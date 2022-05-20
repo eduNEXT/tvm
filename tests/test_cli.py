@@ -15,7 +15,6 @@ def test_should_return_all_tvm_cli_commands():
     assert ' uninstall ' in result.output
     assert ' list ' in result.output
     assert ' use ' in result.output
-    assert ' pip ' in result.output
     assert ' plugins ' in result.output
 
 
