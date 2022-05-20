@@ -71,10 +71,10 @@ with open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.md'), 'r', encoding
 setup(
     name='tutor-version-manager',
     version=VERSION,
-    description="""Helps you keep your cool when creating dozens of open edX and eduNEXT environments""",
+    description="""It manages Tutor versions and enables switching between them.""",
     long_description=README + '\n\n' + CHANGELOG,
     author='eduNEXT',
-    author_email='felipe.montoya@edunext.co',
+    author_email='contact@edunext.co',
     packages=find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=load_requirements('requirements/base.in'),
