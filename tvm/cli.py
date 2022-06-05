@@ -24,6 +24,7 @@ from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
+GET_TAG_URL = "https://api.github.com/repos/overhangio/tutor/git/ref/tags/"
 TVM_PATH = pathlib.Path.home() / '.tvm'
 
 
@@ -43,7 +44,7 @@ def cli() -> None:
 
 
 class TutorVersionType(click.ParamType):
-    """Provide autocomplete functionability for tutor versions."""
+    """Provide autocomplete functionality for tutor versions."""
 
     def shell_complete(self, ctx, param, incomplete):
         """Provide autocomplete for shell."""
@@ -51,6 +52,32 @@ class TutorVersionType(click.ParamType):
             CompletionItem(name)
             for name in get_local_versions() if name.startswith(incomplete)
         ]
+
+
+def setup_version_virtualenv(version=None) -> None:
+    """Create virtualenv and install tutor cloned."""
+    # Create virtualenv
+    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
+                   shell=True, check=True,
+                   executable='/bin/bash')
+
+    # Install tutor
+    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
+                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
+                   shell=True, check=True,
+                   executable='/bin/bash')
+
+
+def get_github_tags(limit: int = 10) -> list:
+    response = requests.get(f'{VERSIONS_URL}?per_page={limit}').json()
+    return response
+
+
+def get_github_tag(version: str) -> dict:
+    response = requests.get(f"{GET_TAG_URL}{version}")
+    if response.status_code == 404:
+        raise click.UsageError(f"Could not find target: {version}")
+    return response.json()
 
 
 def version_is_valid(value):
@@ -122,30 +149,16 @@ def setup_tvm():
         pass
 
 
-def setup_version_virtualenv(version=None) -> None:
-    """Create virtualenv and install tutor cloned."""
-    # Create virtualenv
-    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-                   shell=True, check=True,
-                   executable='/bin/bash')
-
-    # Install tutor
-    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
-                   shell=True, check=True,
-                   executable='/bin/bash')
-
-
 @click.command(name="list")
 @click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
 def list_versions(limit: int):
     """
-    Get all the versions from github.
+    Get all the versions from GitHub.
 
     Print and mark the both the installed ones and the current.
     """
-    # from github
-    api_info = requests.get(f'{VERSIONS_URL}?per_page={limit}').json()
+    # from GitHub
+    api_info = get_github_tags(limit=limit)
     api_versions = [x.get('name') for x in api_info]
 
     # from the local .tvm
@@ -154,10 +167,7 @@ def list_versions(limit: int):
     click.echo(f'Listing the latest {limit} versions of tutor')
     version_names = list(set(api_versions + local_versions))
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
-
-    project_version = None
-    if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+    project_version = get_project_version()
 
     global_active = get_active_version()
 
@@ -183,13 +193,7 @@ def install(force: bool, version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
     setup_tvm()
 
-    # Find the target version info
-    api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
-
-    try:
-        target = [x for x in api_info if x.get('name') == version][0]
-    except IndexError:
-        raise click.UsageError(f'Could not find target: {version}') from IndexError
+    target = get_github_tag(version=version)
 
     if force:
         do_uninstall(version=version)
@@ -247,12 +251,15 @@ def get_active_version() -> str:
     return 'No active version installed'
 
 
-def get_project_version(tvm_project_path) -> str:
+def get_project_version() -> Optional[str]:
     """Read the current active version from the json/bash switcher."""
-    info_file_path = f'{tvm_project_path}/config.json'
-    with open(info_file_path, 'r', encoding='utf-8') as info_file:
-        data = json.load(info_file)
-    return data.get('version')
+    if "TVM_PROJECT_ENV" in os.environ:
+        tvm_project_path = os.environ.get("TVM_PROJECT_ENV")
+        info_file_path = f'{tvm_project_path}/config.json'
+        with open(info_file_path, 'r', encoding='utf-8') as info_file:
+            data = json.load(info_file)
+        return data.get('version')
+    return None
 
 
 def get_current_info(file: str = None) -> Optional[dict]:
@@ -370,10 +377,8 @@ def plugins() -> None:
 @click.command(name="list")
 def list_plugins():
     """List installed plugins by tutor version."""
-    project_version = None
-    if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
 
+    project_version = get_project_version()
     global_active = get_active_version()
 
     local_versions = get_local_versions()
@@ -431,7 +436,7 @@ def init(name: str = None, version: str = None):
 
     if not name:
         letters = string.ascii_letters
-        name = ''.join(random.choice(letters) for i in range(10))
+        name = ''.join(letter for letter in random.choices(letters, k=10))
 
     version = f"{version}@{name}"
 
@@ -483,8 +488,10 @@ def install_plugin(options):
     """Use the package installer pip in current tutor version."""
     options = list(options)
     options.insert(0, "install")
-    if "TVM_PROJECT_ENV" in os.environ:
-        run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
+
+    project_version = get_project_version()
+    if project_version:
+        run_on_tutor_venv('pip', options, version=project_version)
     else:
         run_on_tutor_venv('pip', options)
 
