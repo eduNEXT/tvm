@@ -22,7 +22,10 @@ from click.shell_completion import CompletionItem
 from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
+from tvm.version_manager.application.tutor_version_finder import TutorVersionFinder
+from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
 from tvm.version_manager.application.tutor_vesion_lister import TutorVersionLister
+from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
 from tvm.version_manager.infrastructure.version_manager_git_repository import VersionManagerGitRepository
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
@@ -213,49 +216,22 @@ def list_versions_backup(limit: int):
 
 
 @click.command(name="install")
-@click.option('-f', '--force', is_flag=True, help='Uninstall before running')
 @click.argument('version', callback=validate_version)
-def install(force: bool, version: str):
+def install(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    setup_tvm()
-
-    # Find the target version info
-    api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
-
+    repository = VersionManagerGitRepository()
+    finder = TutorVersionFinder(repository=repository)
+    tutor_version = finder(version=version)
     try:
-        target = [x for x in api_info if x.get('name') == version][0]
-    except IndexError:
-        raise click.UsageError(f'Could not find target: {version}') from IndexError
+        if not tutor_version:
+            raise Exception
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f'{format_err}')
+    except Exception as err:
+        raise click.UsageError(f'Could not find target: {version}') from err
 
-    if force:
-        do_uninstall(version=version)
-
-    try:
-        os.mkdir(f'{TVM_PATH}/{version}')
-        target['installation_date'] = str(datetime.datetime.now())
-        with open(f'{TVM_PATH}/{version}/info.json', 'w', encoding='utf-8') as info_file:
-            json.dump(target, info_file, indent=4)
-    except FileExistsError as error:
-        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.',
-                                           fg='red')) from error
-
-    # Get the code in zip format
-    zipball_url = target.get('zipball_url')
-    zipball_filename = f'{TVM_PATH}/{version}.zip'
-    stream = requests.get(zipball_url, stream=True)
-    with open(zipball_filename, 'wb') as target_file:
-        for chunk in stream.iter_content(chunk_size=256):
-            target_file.write(chunk)
-
-    # Unzip it
-    with zipfile.ZipFile(zipball_filename, "r") as ziped:
-        ziped.extractall(f'{TVM_PATH}/{version}')
-
-    # Delete artifact
-    os.remove(zipball_filename)
-
-    # Create virtualenv and install tutor
-    setup_version_virtualenv(version)
+    installer = TutorVersionInstaller(repository=repository)
+    installer(version=tutor_version)
 
 
 def do_uninstall(version: str):
