@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from tvm.version_manager.domain.tutor_version import TutorVersion
 
@@ -17,4 +17,12 @@ class VersionManagerRepository(ABC):
     @staticmethod
     @abstractmethod
     def current_version(tvm_path: str) -> List[TutorVersion]:
+        pass
+
+    @abstractmethod
+    def install_version(self, version: TutorVersion) -> None:
+        pass
+
+    @abstractmethod
+    def find_version(self, version: TutorVersion) -> Optional[TutorVersion]:
         pass
