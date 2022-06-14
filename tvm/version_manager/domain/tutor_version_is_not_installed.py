@@ -1,0 +1,2 @@
+class TutorVersionIsNotInstalled(Exception):
+    pass
