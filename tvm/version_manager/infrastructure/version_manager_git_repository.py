@@ -1,6 +1,7 @@
 """Actions to get tutor versions"""
 import json
 import os
+import shutil
 import stat
 import pathlib
 import subprocess
@@ -9,6 +10,7 @@ from typing import List, Optional
 
 import requests
 from tvm.version_manager.domain.tutor_version import TutorVersion
+from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
 from tvm.version_manager.domain.version_manager_repository import (
     VersionManagerRepository,
 )
@@ -151,3 +153,9 @@ class VersionManagerGitRepository(VersionManagerRepository):
                        f'pip install -e {self.TVM_PATH}/{version}/overhangio-tutor-*/',
                        shell=True, check=True,
                        executable='/bin/bash')
+
+    def uninstall_version(self, version: TutorVersion) -> None:
+        try:
+            shutil.rmtree(f'{self.TVM_PATH}/{version}')
+        except FileNotFoundError:
+            raise TutorVersionIsNotInstalled(f"The version {version} is not installed")

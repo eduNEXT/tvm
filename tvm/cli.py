@@ -1,5 +1,4 @@
 """Entry point for all the `tvm *` commands."""
-import datetime
 import json
 import os
 import pathlib
@@ -10,7 +9,6 @@ import stat
 import string
 import subprocess
 import sys
-import zipfile
 from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
 from typing import Optional
@@ -24,8 +22,10 @@ from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 from tvm.version_manager.application.tutor_version_finder import TutorVersionFinder
 from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
+from tvm.version_manager.application.tutor_version_uninstaller import TutorVersionUninstaller
 from tvm.version_manager.application.tutor_vesion_lister import TutorVersionLister
 from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
+from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
 from tvm.version_manager.infrastructure.version_manager_git_repository import VersionManagerGitRepository
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
@@ -216,7 +216,7 @@ def list_versions_backup(limit: int):
 
 
 @click.command(name="install")
-@click.argument('version', callback=validate_version)
+@click.argument('version', required=True)
 def install(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
     repository = VersionManagerGitRepository()
@@ -234,19 +234,22 @@ def install(version: str):
     installer(version=tutor_version)
 
 
-def do_uninstall(version: str):
-    """Uninstall the version by deleting the dir."""
-    try:
-        shutil.rmtree(f'{TVM_PATH}/{version}')
-    except FileNotFoundError:
-        click.echo('Nothing to uninstall for this version')
-
-
 @click.command(name="uninstall")
-@click.argument('version', type=TutorVersionType())
+@click.argument('version', required=True)
 def uninstall(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    do_uninstall(version=version)
+    repository = VersionManagerGitRepository()
+    uninstaller = TutorVersionUninstaller(repository=repository)
+    try:
+        uninstaller(version=version)
+        click.echo(click.style(
+            f"The {version} has been uninstalled.",
+            fg='green',
+        ))
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f'{format_err}')
+    except TutorVersionIsNotInstalled as not_installed_err:
+        raise click.exceptions.ClickException(f"{not_installed_err}")
 
 
 def get_active_version() -> str:
