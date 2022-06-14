@@ -26,3 +26,7 @@ class VersionManagerRepository(ABC):
     @abstractmethod
     def find_version(self, version: TutorVersion) -> Optional[TutorVersion]:
         pass
+
+    @abstractmethod
+    def uninstall_version(self, version: TutorVersion) -> None:
+        pass
