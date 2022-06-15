@@ -30,3 +30,12 @@ class VersionManagerRepository(ABC):
     @abstractmethod
     def uninstall_version(self, version: TutorVersion) -> None:
         pass
+
+    @abstractmethod
+    def use_version(self, version: TutorVersion) -> None:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def version_is_installed(version: str) -> None:
+        pass
