@@ -20,6 +20,7 @@ from click.shell_completion import CompletionItem
 from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
+from tvm.version_manager.application.tutor_version_enabler import TutorVersionEnabler
 from tvm.version_manager.application.tutor_version_finder import TutorVersionFinder
 from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
 from tvm.version_manager.application.tutor_version_uninstaller import TutorVersionUninstaller
@@ -330,13 +331,19 @@ def set_switch_from_file(file: str = None) -> None:
 
 
 @click.command(name="use")
-@click.argument('version', callback=validate_version_installed, type=TutorVersionType())
+@click.argument('version', required=True)
 def use(version: str):
     """Configure the path to use VERSION."""
-    setup_tvm()
-    set_active_version(version)
-    file = f'{TVM_PATH}/current_bin.json'
-    set_switch_from_file(file=file)
+    repository = VersionManagerGitRepository()
+    enabler = TutorVersionEnabler(repository=repository)
+    try:
+        if not VersionManagerGitRepository.version_is_installed(version=version):
+            raise Exception
+        enabler(version=version)
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f"{format_err}")
+    except Exception as error:
+        raise click.UsageError(f'The version {version} is not installed.') from error
 
 
 def get_env_by_tutor_version(version):

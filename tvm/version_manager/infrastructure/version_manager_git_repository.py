@@ -159,3 +159,20 @@ class VersionManagerGitRepository(VersionManagerRepository):
             shutil.rmtree(f'{self.TVM_PATH}/{version}')
         except FileNotFoundError:
             raise TutorVersionIsNotInstalled(f"The version {version} is not installed")
+
+    def use_version(self, version: TutorVersion) -> None:
+        data = self.get_current_info()
+
+        data.update({
+            "version": version
+        })
+
+        self.set_current_info(data=data)
+        self.set_switcher()
+
+    @staticmethod
+    def version_is_installed(version: str) -> bool:
+        version = TutorVersion(version)
+        if not os.path.exists(f"{VersionManagerGitRepository.TVM_PATH}/{version}"):
+            return False
+        return True
