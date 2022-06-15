@@ -6,7 +6,7 @@ from tvm.version_manager.domain.tutor_version import TutorVersion
 
 class VersionManagerRepository(ABC):
     @abstractmethod
-    def list_versions(self) -> List[TutorVersion]:
+    def list_versions(self, limit: int) -> List[TutorVersion]:
         pass
 
     @staticmethod
