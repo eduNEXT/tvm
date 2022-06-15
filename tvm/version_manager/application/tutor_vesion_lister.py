@@ -9,5 +9,5 @@ class TutorVersionLister:
     def __init__(self, repository: VersionManagerRepository) -> None:
         self.repository = repository
 
-    def __call__(self) -> List[TutorVersion]:
-        return self.repository.list_versions()
+    def __call__(self, limit: int) -> List[TutorVersion]:
+        return self.repository.list_versions(limit=limit)

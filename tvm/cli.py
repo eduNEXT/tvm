@@ -152,7 +152,7 @@ def list_versions(limit: int):
     """
     repository = VersionManagerGitRepository()
     lister = TutorVersionLister(repository=repository)
-    version_names = lister()
+    version_names = lister(limit=limit)
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
     local_versions = repository.local_versions(TVM_PATH)
     global_active = repository.current_version(TVM_PATH)

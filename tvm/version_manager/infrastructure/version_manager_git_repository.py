@@ -86,13 +86,13 @@ class VersionManagerGitRepository(VersionManagerRepository):
         os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
     def get_version_from_api(self, limit: int = 10):
-        "Return api information form request"
+        """Return api information form request"""
 
         api_info = requests.get(f"{self.VERSIONS_URL}?per_page={limit}").json()
         return api_info
 
-    def list_versions(self) -> List[TutorVersion]:
-        api_info = self.get_version_from_api()
+    def list_versions(self, limit: int) -> List[TutorVersion]:
+        api_info = self.get_version_from_api(limit=limit)
         return [TutorVersion(x.get("name")) for x in api_info]
 
     @staticmethod
