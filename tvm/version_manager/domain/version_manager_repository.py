@@ -8,3 +8,13 @@ class VersionManagerRepository(ABC):
     @abstractmethod
     def list_versions(self) -> List[TutorVersion]:
         pass
+
+    @staticmethod
+    @abstractmethod
+    def local_versions(tvm_path: str) -> List[TutorVersion]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def current_version(tvm_path: str) -> List[TutorVersion]:
+        pass

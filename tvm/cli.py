@@ -141,17 +141,21 @@ def setup_version_virtualenv(version=None) -> None:
 @click.command(name="list")
 @click.option("-l", "--limit", default=10, help="number of `latest versions` to list")
 def list_versions(limit: int):
+    """
+    Get all the versions from github.
+
+    Print and mark the both the installed ones and the current.
+    """
     repository = VersionManagerGitRepository()
     lister = TutorVersionLister(repository=repository)
     version_names = lister()
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
-    local_versions = repository.get_tutor_local_versions()
-    global_active = repository.get_active_tutor_version()
+    local_versions = repository.local_versions(TVM_PATH)
+    global_active = repository.current_version(TVM_PATH)
     project_version = None
+
     if "TVM_PROJECT_ENV" in os.environ:
-        project_version = repository.get_project_tutor_version(
-            os.environ.get("TVM_PROJECT_ENV")
-        )
+        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
     for name in version_names:
         color = "yellow"
         if name in local_versions:
