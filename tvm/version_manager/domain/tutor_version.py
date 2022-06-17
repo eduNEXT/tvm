@@ -13,4 +13,3 @@ class TutorVersion(str):
         result = re.match(r'^v([0-9]+)\.([0-9]+)\.([0-9]+)$', value)
         if not result:
             raise TutorVersionFormatError("format must be 'vX.Y.Z'")
-

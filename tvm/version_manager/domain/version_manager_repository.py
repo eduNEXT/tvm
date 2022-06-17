@@ -39,3 +39,11 @@ class VersionManagerRepository(ABC):
     @abstractmethod
     def version_is_installed(version: str) -> None:
         pass
+
+    @abstractmethod
+    def install_plugin(self, options: List) -> None:
+        pass
+
+    @abstractmethod
+    def uninstall_plugin(self, options: List) -> None:
+        pass

@@ -20,6 +20,8 @@ from click.shell_completion import CompletionItem
 from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
+from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
+from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller
 from tvm.version_manager.application.tutor_version_enabler import TutorVersionEnabler
 from tvm.version_manager.application.tutor_version_finder import TutorVersionFinder
 from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
@@ -508,17 +510,22 @@ def install_plugin(options):
     if "TVM_PROJECT_ENV" in os.environ:
         run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
     else:
-        run_on_tutor_venv('pip', options)
+        repository = VersionManagerGitRepository()
+        installer = TutorPluginInstaller(repository=repository)
+        installer(options)
 
 
 @click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def uninstall_plugin(options):
     """Use the package installer pip in current tutor version."""
+    repository = VersionManagerGitRepository()
+    uninstaller =TutorPluginUninstaller(repository=repository)
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
-    click.echo(run_on_tutor_venv('pip', options))
+    uninstaller(options)
+    # click.echo(run_on_tutor_venv('pip', options))
 
 
 @click.group(
