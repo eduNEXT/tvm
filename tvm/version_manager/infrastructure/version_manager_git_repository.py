@@ -5,9 +5,11 @@ import shutil
 import stat
 import pathlib
 import subprocess
+import sys
 import zipfile
 from typing import List, Optional
 
+import click
 import requests
 from tvm.version_manager.domain.tutor_version import TutorVersion
 from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
@@ -147,6 +149,21 @@ class VersionManagerGitRepository(VersionManagerRepository):
         subprocess.run(f'cd {self.TVM_PATH}/{version}; virtualenv --prompt {version} venv',
                        shell=True, check=True,
                        executable='/bin/bash')
+
+    def run_command_in_virtualenv(self, options: List):
+        try:
+            subprocess.run(f'source {self.TVM_PATH}/venv/bin/activate;'
+                       f'pip {" ".join(options)}',
+                       shell=True, check=True,
+                       executable='/bin/bash')
+        except subprocess.CalledProcessError as ex:
+            raise Exception(f'Error running venv commands: {ex.output}')
+
+    def install_plugin(self, options: List) -> None:
+        self.run_command_in_virtualenv(options)
+
+    def uninstall_plugin(self, options: List) -> None:
+        self.run_command_in_virtualenv(options)
 
     def install_tutor(self, version: TutorVersion) -> None:
         subprocess.run(f'source {self.TVM_PATH}/{version}/venv/bin/activate;'
