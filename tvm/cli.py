@@ -1,5 +1,4 @@
 """Entry point for all the `tvm *` commands."""
-import datetime
 import json
 import os
 import pathlib
@@ -10,7 +9,6 @@ import stat
 import string
 import subprocess
 import sys
-import zipfile
 from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
 from typing import Optional
@@ -22,6 +20,16 @@ from click.shell_completion import CompletionItem
 from tvm import __version__
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
+from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
+from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller
+from tvm.version_manager.application.tutor_version_enabler import TutorVersionEnabler
+from tvm.version_manager.application.tutor_version_finder import TutorVersionFinder
+from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
+from tvm.version_manager.application.tutor_version_uninstaller import TutorVersionUninstaller
+from tvm.version_manager.application.tutor_vesion_lister import TutorVersionLister
+from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
+from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
+from tvm.version_manager.infrastructure.version_manager_git_repository import VersionManagerGitRepository
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path.home() / '.tvm'
@@ -137,8 +145,41 @@ def setup_version_virtualenv(version=None) -> None:
 
 
 @click.command(name="list")
-@click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
+@click.option("-l", "--limit", default=10, help="number of `latest versions` to list")
 def list_versions(limit: int):
+    """
+    Get all the versions from github.
+
+    Print and mark the both the installed ones and the current.
+    """
+    repository = VersionManagerGitRepository()
+    lister = TutorVersionLister(repository=repository)
+    version_names = lister(limit=limit)
+    version_names = sorted(version_names, reverse=True, key=LooseVersion)
+    local_versions = repository.local_versions(TVM_PATH)
+    global_active = repository.current_version(TVM_PATH)
+    project_version = None
+
+    if "TVM_PROJECT_ENV" in os.environ:
+        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+    for name in version_names:
+        color = "yellow"
+        if name in local_versions:
+            color = "green"
+        if name == global_active:
+            if project_version:
+                color = "blue"
+                name = f"{name} (global)"
+            else:
+                name = f"{name} (active)"
+        if project_version and project_version == name:
+            name = f"{name} (active)"
+        click.echo(click.style(name, fg=color))
+
+
+@click.command(name="list")
+@click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
+def list_versions_backup(limit: int):
     """
     Get all the versions from github.
 
@@ -177,64 +218,40 @@ def list_versions(limit: int):
 
 
 @click.command(name="install")
-@click.option('-f', '--force', is_flag=True, help='Uninstall before running')
-@click.argument('version', callback=validate_version)
-def install(force: bool, version: str):
+@click.argument('version', required=True)
+def install(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    setup_tvm()
-
-    # Find the target version info
-    api_info = requests.get(f'{VERSIONS_URL}?per_page=100').json()
-
+    repository = VersionManagerGitRepository()
+    finder = TutorVersionFinder(repository=repository)
+    tutor_version = finder(version=version)
     try:
-        target = [x for x in api_info if x.get('name') == version][0]
-    except IndexError:
-        raise click.UsageError(f'Could not find target: {version}') from IndexError
+        if not tutor_version:
+            raise Exception
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f'{format_err}')
+    except Exception as err:
+        raise click.UsageError(f'Could not find target: {version}') from err
 
-    if force:
-        do_uninstall(version=version)
-
-    try:
-        os.mkdir(f'{TVM_PATH}/{version}')
-        target['installation_date'] = str(datetime.datetime.now())
-        with open(f'{TVM_PATH}/{version}/info.json', 'w', encoding='utf-8') as info_file:
-            json.dump(target, info_file, indent=4)
-    except FileExistsError as error:
-        raise click.UsageError(click.style(f'Already exists a directory {version}. Uninstall first.',
-                                           fg='red')) from error
-
-    # Get the code in zip format
-    zipball_url = target.get('zipball_url')
-    zipball_filename = f'{TVM_PATH}/{version}.zip'
-    stream = requests.get(zipball_url, stream=True)
-    with open(zipball_filename, 'wb') as target_file:
-        for chunk in stream.iter_content(chunk_size=256):
-            target_file.write(chunk)
-
-    # Unzip it
-    with zipfile.ZipFile(zipball_filename, "r") as ziped:
-        ziped.extractall(f'{TVM_PATH}/{version}')
-
-    # Delete artifact
-    os.remove(zipball_filename)
-
-    # Create virtualenv and install tutor
-    setup_version_virtualenv(version)
-
-
-def do_uninstall(version: str):
-    """Uninstall the version by deleting the dir."""
-    try:
-        shutil.rmtree(f'{TVM_PATH}/{version}')
-    except FileNotFoundError:
-        click.echo('Nothing to uninstall for this version')
+    installer = TutorVersionInstaller(repository=repository)
+    installer(version=tutor_version)
 
 
 @click.command(name="uninstall")
-@click.argument('version', type=TutorVersionType())
+@click.argument('version', required=True)
 def uninstall(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    do_uninstall(version=version)
+    repository = VersionManagerGitRepository()
+    uninstaller = TutorVersionUninstaller(repository=repository)
+    try:
+        uninstaller(version=version)
+        click.echo(click.style(
+            f"The {version} has been uninstalled.",
+            fg='green',
+        ))
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f'{format_err}')
+    except TutorVersionIsNotInstalled as not_installed_err:
+        raise click.exceptions.ClickException(f"{not_installed_err}")
 
 
 def get_active_version() -> str:
@@ -315,13 +332,19 @@ def set_switch_from_file(file: str = None) -> None:
 
 
 @click.command(name="use")
-@click.argument('version', callback=validate_version_installed, type=TutorVersionType())
+@click.argument('version', required=True)
 def use(version: str):
     """Configure the path to use VERSION."""
-    setup_tvm()
-    set_active_version(version)
-    file = f'{TVM_PATH}/current_bin.json'
-    set_switch_from_file(file=file)
+    repository = VersionManagerGitRepository()
+    enabler = TutorVersionEnabler(repository=repository)
+    try:
+        if not VersionManagerGitRepository.version_is_installed(version=version):
+            raise Exception
+        enabler(version=version)
+    except TutorVersionFormatError as format_err:
+        raise click.UsageError(f"{format_err}")
+    except Exception as error:
+        raise click.UsageError(f'The version {version} is not installed.') from error
 
 
 def get_env_by_tutor_version(version):
@@ -486,17 +509,21 @@ def install_plugin(options):
     if "TVM_PROJECT_ENV" in os.environ:
         run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
     else:
-        run_on_tutor_venv('pip', options)
+        repository = VersionManagerGitRepository()
+        installer = TutorPluginInstaller(repository=repository)
+        installer(options)
 
 
 @click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def uninstall_plugin(options):
     """Use the package installer pip in current tutor version."""
+    repository = VersionManagerGitRepository()
+    uninstaller = TutorPluginUninstaller(repository=repository)
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
-    click.echo(run_on_tutor_venv('pip', options))
+    uninstaller(options)
 
 
 @click.group(
