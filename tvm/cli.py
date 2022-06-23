@@ -525,8 +525,7 @@ def uninstall_plugin(options):
     options.insert(0, "uninstall")
     options.append("-y")
     uninstaller(options)
-    # click.echo(run_on_tutor_venv('pip', options))
-
+    
 
 @click.group(
     name="config",

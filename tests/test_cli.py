@@ -29,12 +29,6 @@ def test_should_fail_if_version_does_not_exist():
     assert 'Could not find target: v0.0.99' in result.stdout
 
 
-def test_should_fail_if_version_is_not_installed():
-    runner = CliRunner()
-    result = runner.invoke(uninstall, ["v0.0.99"])
-    assert 'Nothing to uninstall' in result.stdout
-
-
 def test_should_return_all_tvm_project_commands():
     runner = CliRunner()
     result = runner.invoke(projects)
