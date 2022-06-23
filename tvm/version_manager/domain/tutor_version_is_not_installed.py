@@ -1,2 +1,5 @@
+"""Tutor vesion is not installed."""
+
+
 class TutorVersionIsNotInstalled(Exception):
-    pass
+    """Tutor vesion is not installed  domain."""
