@@ -1,8 +1,14 @@
 import pytest
 
-from tests.version_manager.infrastructure.version_manager_in_memory_repository import VersionManagerInMemoryRepository
-from tvm.version_manager.application.tutor_version_installer import TutorVersionInstaller
-from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
+from tests.version_manager.infrastructure.version_manager_in_memory_repository import (
+    VersionManagerInMemoryRepository,
+)
+from tvm.version_manager.application.tutor_version_installer import (
+    TutorVersionInstaller,
+)
+from tvm.version_manager.domain.tutor_version_format_error import (
+    TutorVersionFormatError,
+)
 
 
 def test_should_fail_if_version_format_is_not_valid():

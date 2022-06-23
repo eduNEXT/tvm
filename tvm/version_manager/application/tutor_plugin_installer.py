@@ -1,4 +1,3 @@
-from tvm.version_manager.domain.tutor_version import TutorVersion
 from tvm.version_manager.domain.version_manager_repository import VersionManagerRepository
 
 
