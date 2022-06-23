@@ -1,2 +1,5 @@
+"""Tutor version format error message."""
+
+
 class TutorVersionFormatError(Exception):
-    pass
+    """Tutor version format error exception."""

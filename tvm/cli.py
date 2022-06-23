@@ -177,7 +177,6 @@ def list_versions(limit: int):
         click.echo(click.style(name, fg=color))
 
 
-
 @click.command(name="list")
 @click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
 def list_versions_backup(limit: int):
@@ -520,12 +519,12 @@ def install_plugin(options):
 def uninstall_plugin(options):
     """Use the package installer pip in current tutor version."""
     repository = VersionManagerGitRepository()
-    uninstaller =TutorPluginUninstaller(repository=repository)
+    uninstaller = TutorPluginUninstaller(repository=repository)
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
     uninstaller(options)
-    
+
 
 @click.group(
     name="config",
