@@ -33,14 +33,9 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             "tutor_root": f"{self.PROJECT_PATH}",
             "tutor_plugins_root": f"{self.PROJECT_PATH}/plugins",
         }
-        context = {
-            "version": data.get("version", None),
-            "tvm": f"{TVM_PATH}",
-        }
 
         self.create_config_json(data)
         self.create_active_script(data)
-        self.create_tutor_switcher(context)
         self.create_project(version)
 
     def current_version(self) -> ProjectName:
@@ -57,17 +52,12 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
 
     def create_active_script(self, context: dict) -> None:
         """Create active script file."""
+        context.update({
+            "tvm_path": TVM_PATH
+        })
         activate_script = f"{self.TVM_ENVIRONMENT}/bin/activate"
         with open(activate_script, "w", encoding="utf-8") as activate_file:
             activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
-
-    def create_tutor_switcher(self, context: dict) -> None:
-        """Create tutor switcher file."""
-        tutor_file = f"{self.TVM_ENVIRONMENT}/bin/tutor"
-        with open(tutor_file, "w", encoding="utf-8") as switcher_file:
-            switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
-        # set execute permissions
-        os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
     def create_project(self, project: str) -> None:
         """Duplicate the version directory and rename it."""
@@ -86,7 +76,7 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         """Create virtualenv and install tutor cloned."""
         # Create virtualenv
         subprocess.run(
-            f"cd {TVM_PATH}/{version}; virtualenv venv",
+            f"cd {TVM_PATH}/{version}; virtualenv --prompt {version} venv",
             shell=True,
             check=True,
             executable="/bin/bash",
