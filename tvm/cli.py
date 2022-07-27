@@ -152,15 +152,11 @@ def list_versions(limit: int):
         repository = EnvironmentManagerGitRepository(project_path=os.environ.get("TVM_PROJECT_ENV"))
         project_version = repository.current_version()
     for name in version_names:
-        color = "yellow"
+        color = "white"
         if name in local_versions:
             color = "green"
-        if name == global_active:
-            if project_version:
-                color = "blue"
-                name = f"{name} (global)"
-            else:
-                name = f"{name} (active)"
+        if name == global_active and not project_version:
+            name = f"{name} (active)"
         if project_version and project_version == name:
             name = f"{name} (active)"
         click.echo(click.style(name, fg=color))
@@ -345,11 +341,8 @@ def list_plugins():
     for version in local_versions:
         version = str(version)
 
-        if version == global_active:
-            if project_version:
-                click.echo(click.style(f"{version} (global)", fg='blue'))
-            else:
-                click.echo(click.style(f"{version} (active)", fg='green'))
+        if version == global_active and not project_version:
+            click.echo(click.style(f"{version} (active)", fg='green'))
         elif project_version and version == project_version:
             click.echo(click.style(f"{version} (active)", fg='green'))
         else:
