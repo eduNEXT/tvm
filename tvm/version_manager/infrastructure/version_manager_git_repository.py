@@ -9,6 +9,8 @@ import zipfile
 from typing import List, Optional
 
 import requests
+import requests_cache
+from datetime import timedelta
 
 from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.version_manager.domain.tutor_version import TutorVersion
@@ -105,8 +107,9 @@ class VersionManagerGitRepository(VersionManagerRepository):
             switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
         )
 
-    def get_version_from_api(self, limit: int = 10):
+    def get_version_from_api(self, limit: int = 100):
         """Return api information form request."""
+        requests_cache.install_cache('github_cache', expire_after=timedelta(days=1))
         api_info = requests.get(f"{self.VERSIONS_URL}?per_page={limit}").json()
         return api_info
 
