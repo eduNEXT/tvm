@@ -19,7 +19,7 @@ from tvm import __version__
 from tvm.environment_manager.application.plugin_installer import PluginInstaller
 from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
 from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
-from tvm.environment_manager.infrastructure.environment_manager_git_repository import EnvironmentManagerGitRepository
+from tvm.settings import version_manager, environment_manager
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
 from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller
@@ -30,7 +30,6 @@ from tvm.version_manager.application.tutor_version_uninstaller import TutorVersi
 from tvm.version_manager.application.tutor_vesion_lister import TutorVersionLister
 from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
 from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
-from tvm.version_manager.infrastructure.version_manager_git_repository import VersionManagerGitRepository
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path.home() / '.tvm'
@@ -139,17 +138,16 @@ def list_versions(limit: int):
 
     Print and mark the both the installed ones and the current.
     """
-    repository = VersionManagerGitRepository()
-    lister = TutorVersionLister(repository=repository)
+    lister = TutorVersionLister(repository=version_manager)
     version_names = lister(limit=limit)
-    local_versions = repository.local_versions(f"{TVM_PATH}")
+    local_versions = version_manager.local_versions(f"{TVM_PATH}")
     version_names = list(set(version_names + local_versions))
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
-    global_active = repository.current_version(f"{TVM_PATH}")
+    global_active = version_manager.current_version(f"{TVM_PATH}")
     project_version = None
 
     if "TVM_PROJECT_ENV" in os.environ:
-        repository = EnvironmentManagerGitRepository(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(project_path=os.environ.get("TVM_PROJECT_ENV"))
         project_version = repository.current_version()
     for name in version_names:
         color = "white"
@@ -161,12 +159,12 @@ def list_versions(limit: int):
             name = f"{name} (active)"
         click.echo(click.style(name, fg=color))
 
+
 @click.command(name="install")
 @click.argument('version', required=True)
 def install(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    repository = VersionManagerGitRepository()
-    finder = TutorVersionFinder(repository=repository)
+    finder = TutorVersionFinder(repository=version_manager)
     tutor_version = finder(version=version)
     try:
         if not tutor_version:
@@ -176,7 +174,7 @@ def install(version: str):
     except Exception as err:
         raise click.UsageError(f'Could not find target: {version}') from err
 
-    installer = TutorVersionInstaller(repository=repository)
+    installer = TutorVersionInstaller(repository=version_manager)
     installer(version=tutor_version)
 
 
@@ -184,8 +182,7 @@ def install(version: str):
 @click.argument('version', required=True)
 def uninstall(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    repository = VersionManagerGitRepository()
-    uninstaller = TutorVersionUninstaller(repository=repository)
+    uninstaller = TutorVersionUninstaller(repository=version_manager)
     try:
         uninstaller(version=version)
         click.echo(click.style(
@@ -271,10 +268,9 @@ def set_switch_from_file(file: str = None) -> None:
 @click.argument('version', required=True)
 def use(version: str):
     """Configure the path to use VERSION."""
-    repository = VersionManagerGitRepository()
-    enabler = TutorVersionEnabler(repository=repository)
+    enabler = TutorVersionEnabler(repository=version_manager)
     try:
-        if not VersionManagerGitRepository.version_is_installed(version=version):
+        if not version_manager.version_is_installed(version=version):
             raise Exception
         enabler(version=version)
     except TutorVersionFormatError as format_err:
@@ -332,7 +328,7 @@ def list_plugins():
     """List installed plugins by tutor version."""
     project_version = None
     if "TVM_PROJECT_ENV" in os.environ:
-        repository = EnvironmentManagerGitRepository(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(project_path=os.environ.get("TVM_PROJECT_ENV"))
         project_version = repository.current_version()
 
     global_active = get_active_version()
@@ -386,7 +382,7 @@ def init(name: str = None, version: str = None):
     if not os.path.exists(tvm_environment):
         pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
 
-        repository = EnvironmentManagerGitRepository(project_path=f"{tvm_project_folder}")
+        repository = environment_manager(project_path=f"{tvm_project_folder}")
         initialize = TutorProjectCreator(repository=repository)
         initialize(version)
     else:
@@ -401,11 +397,10 @@ def install_plugin(options):
     options.insert(0, "install")
 
     if "TVM_PROJECT_ENV" in os.environ:
-        repository = EnvironmentManagerGitRepository(os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(os.environ.get("TVM_PROJECT_ENV"))
         installer = PluginInstaller(repository=repository)
     else:
-        repository = VersionManagerGitRepository()
-        installer = TutorPluginInstaller(repository=repository)
+        installer = TutorPluginInstaller(repository=version_manager)
     installer(options)
 
 
@@ -417,11 +412,10 @@ def uninstall_plugin(options):
     options.insert(0, "uninstall")
     options.append("-y")
     if "TVM_PROJECT_ENV" in os.environ:
-        repository = EnvironmentManagerGitRepository(os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(os.environ.get("TVM_PROJECT_ENV"))
         uninstaller = PluginUninstaller(repository=repository)
     else:
-        repository = VersionManagerGitRepository()
-        uninstaller = TutorPluginUninstaller(repository=repository)
+        uninstaller = TutorPluginUninstaller(repository=version_manager)
     uninstaller(options)
 
 

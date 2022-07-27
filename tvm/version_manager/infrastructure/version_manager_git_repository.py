@@ -10,6 +10,7 @@ from typing import List, Optional
 
 import requests
 
+from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.version_manager.domain.tutor_version import TutorVersion
 from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
 from tvm.version_manager.domain.version_manager_repository import VersionManagerRepository
@@ -24,8 +25,9 @@ class VersionManagerGitRepository(VersionManagerRepository):
     ZIPPBALL_URL = "https://api.github.com/repos/overhangio/tutor/zipball/refs/tags/"
     TVM_PATH = pathlib.Path.home() / ".tvm"
 
-    def __init__(self) -> None:
+    def __init__(self, logger: ClientLoggerRepository) -> None:
         """init."""
+        self.logger = logger
         self.setup()
 
     def setup(self):
@@ -47,6 +49,11 @@ class VersionManagerGitRepository(VersionManagerRepository):
         try:
             os.symlink(f"{self.TVM_PATH}/tutor_switcher", "/usr/local/bin/tutor")
         except PermissionError:
+            self.logger.echo(
+                "Don't Worry, TVM just needs sudo permissions to create the tutor_switcher's symlink"
+                "in /usr/local/bin/tutor.\n"
+                "You can find more information about it in our docs."
+            )
             subprocess.call(
                 [
                     "sudo",
