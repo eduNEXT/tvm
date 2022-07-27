@@ -142,13 +142,15 @@ def list_versions(limit: int):
     repository = VersionManagerGitRepository()
     lister = TutorVersionLister(repository=repository)
     version_names = lister(limit=limit)
+    local_versions = repository.local_versions(f"{TVM_PATH}")
+    version_names = list(set(version_names + local_versions))
     version_names = sorted(version_names, reverse=True, key=LooseVersion)
-    local_versions = repository.local_versions(TVM_PATH)
-    global_active = repository.current_version(TVM_PATH)
+    global_active = repository.current_version(f"{TVM_PATH}")
     project_version = None
 
     if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+        repository = EnvironmentManagerGitRepository(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        project_version = repository.current_version()
     for name in version_names:
         color = "yellow"
         if name in local_versions:
@@ -162,47 +164,6 @@ def list_versions(limit: int):
         if project_version and project_version == name:
             name = f"{name} (active)"
         click.echo(click.style(name, fg=color))
-
-
-@click.command(name="list")
-@click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
-def list_versions_backup(limit: int):
-    """
-    Get all the versions from github.
-
-    Print and mark the both the installed ones and the current.
-    """
-    # from github
-    api_info = requests.get(f'{VERSIONS_URL}?per_page={limit}').json()
-    api_versions = [x.get('name') for x in api_info]
-
-    # from the local .tvm
-    local_versions = get_local_versions()
-
-    click.echo(f'Listing the latest {limit} versions of tutor')
-    version_names = list(set(api_versions + local_versions))
-    version_names = sorted(version_names, reverse=True, key=LooseVersion)
-
-    project_version = None
-    if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
-
-    global_active = get_active_version()
-
-    for name in version_names:
-        color = 'yellow'
-        if name in local_versions:
-            color = 'green'
-        if name == global_active:
-            if project_version:
-                color = 'blue'
-                name = f'{name} (global)'
-            else:
-                name = f'{name} (active)'
-        if project_version and project_version == name:
-            name = f'{name} (active)'
-        click.echo(click.style(name, fg=color))
-
 
 @click.command(name="install")
 @click.argument('version', required=True)
@@ -249,14 +210,6 @@ def get_active_version() -> str:
             data = json.load(info_file)
         return data.get('version', 'Invalid active version')
     return 'No active version installed'
-
-
-def get_project_version(tvm_project_path) -> str:
-    """Read the current active version from the json/bash switcher."""
-    info_file_path = f'{tvm_project_path}/config.json'
-    with open(info_file_path, 'r', encoding='utf-8') as info_file:
-        data = json.load(info_file)
-    return data.get('version')
 
 
 def get_current_info(file: str = None) -> Optional[dict]:
@@ -383,7 +336,8 @@ def list_plugins():
     """List installed plugins by tutor version."""
     project_version = None
     if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+        repository = EnvironmentManagerGitRepository(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        project_version = repository.current_version()
 
     global_active = get_active_version()
 
