@@ -10,5 +10,17 @@ class EnvironmentManagerRepository(ABC):
 
     @staticmethod
     @abstractmethod
-    def project_init(self, version, tvm_project_folder) -> None:
+    def project_init(self, version) -> None:
         """Tutor Project Init to environment manager."""
+
+    @abstractmethod
+    def current_version(self) -> None:
+        """Get the project's version"""
+
+    @abstractmethod
+    def install_plugin(self, options: List) -> None:
+        """Install a pip package"""
+
+    @abstractmethod
+    def uninstall_plugin(self, options: List) -> None:
+        """Uninstall a pip package"""

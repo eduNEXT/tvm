@@ -6,8 +6,10 @@ import pathlib
 import shutil
 import stat
 import subprocess
-from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
+from typing import List
 
+from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
+from tvm.environment_manager.domain.project_name import ProjectName
 
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
@@ -17,40 +19,48 @@ TVM_PATH = pathlib.Path.home() / '.tvm'
 
 class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
     """Principals commands to manage TVM."""
+    def __init__(self, project_path: str) -> None:
+        self.PROJECT_PATH = project_path
+        self.TVM_ENVIRONMENT = f"{project_path}/.tvm"
 
-    def project_init(self, version: str, tvm_project_folder: str) -> None:
+    def project_init(self, version: str) -> None:
         """Initialize tutor project."""
-        tvm_environment = tvm_project_folder / '.tvm'
         data = {
             "version": f"{version}",
-            "tutor_root": f"{tvm_project_folder}",
-            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
+            "tutor_root": f"{self.PROJECT_PATH}",
+            "tutor_plugins_root": f"{self.PROJECT_PATH}/plugins"
         }
         context = {
             'version': data.get('version', None),
             'tvm': f"{TVM_PATH}",
         }
 
-        self.create_config_json(tvm_environment, data)
-        self.create_active_script(tvm_environment, data)
-        self.create_tutor_switcher(tvm_environment, context)
+        self.create_config_json(data)
+        self.create_active_script(data)
+        self.create_tutor_switcher(context)
         self.create_project(version)
 
-    def create_config_json(self, tvm_environment: str, data: dict) -> None:
+    def current_version(self) -> ProjectName:
+        info_file_path = f'{self.TVM_ENVIRONMENT}/config.json'
+        with open(info_file_path, 'r', encoding='utf-8') as info_file:
+            data = json.load(info_file)
+        return ProjectName(data.get('version'))
+
+    def create_config_json(self, data: dict) -> None:
         """Create configuration json file"""
-        tvm_project_config_file = f"{tvm_environment}/config.json"
+        tvm_project_config_file = f"{self.TVM_ENVIRONMENT}/config.json"
         with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
             json.dump(data, info_file, indent=4)
 
-    def create_active_script(self, tvm_environment: str, context: dict) -> None:
+    def create_active_script(self, context: dict) -> None:
         """Create active script file."""
-        activate_script = f"{tvm_environment}/bin/activate"
+        activate_script = f"{self.TVM_ENVIRONMENT}/bin/activate"
         with open(activate_script, 'w', encoding='utf-8') as activate_file:
             activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
 
-    def create_tutor_switcher(self, tvm_environment: str, context: dict) -> None:
+    def create_tutor_switcher(self, context: dict) -> None:
         """Create tutor switcher file."""
-        tutor_file = f"{tvm_environment}/bin/tutor"
+        tutor_file = f"{self.TVM_ENVIRONMENT}/bin/tutor"
         with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
             switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
         # set execute permissions
@@ -68,7 +78,8 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             shutil.rmtree(f"{tvm_project}/venv")
             self.setup_version_virtualenv(project)
 
-    def setup_version_virtualenv(self, version=None) -> None:
+    @staticmethod
+    def setup_version_virtualenv(version=None) -> None:
         """Create virtualenv and install tutor cloned."""
         # Create virtualenv
         subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
@@ -80,3 +91,24 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
                     f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
                     shell=True, check=True,
                     executable='/bin/bash')
+
+    def run_command_in_virtualenv(self, options: List, name: ProjectName = None):
+        """Use virtual environment to run command."""
+        if not name:
+            name = self.current_version()
+
+        try:
+            subprocess.run(
+                f"source {TVM_PATH}/{name}/venv/bin/activate;" f'pip {" ".join(options)}',
+                shell=True,
+                check=True,
+                executable="/bin/bash",
+            )
+        except subprocess.CalledProcessError as ex:
+            raise Exception(f"Error running venv commands: {ex.output}") from ex
+
+    def install_plugin(self, options: List) -> None:
+        self.run_command_in_virtualenv(options=options)
+
+    def uninstall_plugin(self, options: List) -> None:
+        self.run_command_in_virtualenv(options=options)

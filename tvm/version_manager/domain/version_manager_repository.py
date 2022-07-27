@@ -44,9 +44,9 @@ class VersionManagerRepository(ABC):
         """Version is installed method."""
 
     @abstractmethod
-    def install_plugin(self, options: List) -> None:
+    def install_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Install tutor plugin."""
 
     @abstractmethod
-    def uninstall_plugin(self, options: List) -> None:
+    def uninstall_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Uninstall tutor plugin."""

@@ -9,6 +9,6 @@ class TutorProjectInit:
         """init."""
         self.repository = repository
 
-    def __call__(self, version, tvm_project_folder) -> None:
+    def __call__(self, version) -> None:
         """call."""
-        self.repository.project_init(version, tvm_project_folder)
+        self.repository.project_init(version)
