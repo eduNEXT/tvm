@@ -426,13 +426,13 @@ def init(name: str = None, version: str = None):
     if not version_is_installed(version):
         raise click.UsageError(f'Could not find target: {version}')
 
-    if not name:
-        letters = string.ascii_letters
-        name = ''.join(random.choice(letters) for i in range(10))
+    if name:
+        tvm_project_folder = pathlib.Path().resolve() / name
+    else:
+        name = f"{pathlib.Path().resolve()}".split("/")[-1]
+        tvm_project_folder = pathlib.Path().resolve()
 
     version = f"{version}@{name}"
-
-    tvm_project_folder = pathlib.Path().resolve()
     tvm_environment = tvm_project_folder / '.tvm'
 
     if not os.path.exists(tvm_environment):
