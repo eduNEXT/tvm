@@ -54,7 +54,7 @@ tvmoff nondestructive
 TVM_PROJECT_ENV="{{ tutor_root }}"
 export TVM_PROJECT_ENV
 _TVM_OLD_VIRTUAL_PATH="$PATH"
-PATH="$TVM_PROJECT_ENV/.tvm/bin:$PATH"
+PATH="{{tvm_path}}/{{version}}/venv/bin:$PATH"
 export PATH
 if ! [ -z "${TUTOR_ROOT+_}" ] ; then
     _TVM_OLD_TUTOR_ROOT="$TUTOR_ROOT"
