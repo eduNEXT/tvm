@@ -1,8 +1,6 @@
 """Environment manager repository methods."""
 from abc import ABC, abstractmethod
-from typing import List, Optional
-
-from tvm.version_manager.domain.tutor_version import TutorVersion
+from typing import List
 
 
 class EnvironmentManagerRepository(ABC):
@@ -10,7 +8,7 @@ class EnvironmentManagerRepository(ABC):
 
     @staticmethod
     @abstractmethod
-    def project_init(self, version) -> None:
+    def project_creator(self, version) -> None:
         """Tutor Project Init to environment manager."""
 
     @abstractmethod
