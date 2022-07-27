@@ -330,8 +330,9 @@ def use(version: str):
         enabler(version=version)
     except TutorVersionFormatError as format_err:
         raise click.UsageError(f"{format_err}")
-    except Exception as error:
-        raise click.UsageError(f'The version {version} is not installed.') from error
+    except Exception:
+        raise click.ClickException(f'The version {version} is not installed you should install it before using it.\n'
+                                   f'You could run the command `tvm install {version}` to install it.')
 
 
 def get_env_by_tutor_version(version):
