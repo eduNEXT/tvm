@@ -18,6 +18,8 @@ import requests
 from click.shell_completion import CompletionItem
 
 from tvm import __version__
+from tvm.environment_manager.application.tutor_project_init import TutorProjectInit
+from tvm.environment_manager.infrastructure.environment_manager_git_repository import EnvironmentManagerGitRepository
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
@@ -130,18 +132,18 @@ def setup_tvm():
         pass
 
 
-def setup_version_virtualenv(version=None) -> None:
-    """Create virtualenv and install tutor cloned."""
-    # Create virtualenv
-    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-                   shell=True, check=True,
-                   executable='/bin/bash')
+# def setup_version_virtualenv(version=None) -> None:
+#     """Create virtualenv and install tutor cloned."""
+#     # Create virtualenv
+#     subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
+#                    shell=True, check=True,
+#                    executable='/bin/bash')
 
-    # Install tutor
-    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
-                   shell=True, check=True,
-                   executable='/bin/bash')
+#     # Install tutor
+#     subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
+#                    f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
+#                    shell=True, check=True,
+#                    executable='/bin/bash')
 
 
 @click.command(name="list")
@@ -428,17 +430,17 @@ def projects() -> None:
     """Hold the main wrapper for the `tvm project` command."""
 
 
-def create_project(project: str) -> None:
-    """Duplicate the version directory and rename it."""
-    if not os.path.exists(f"{TVM_PATH}/{project}"):
-        tutor_version = project.split("@")[0]
-        tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
+# def create_project(project: str) -> None:
+#     """Duplicate the version directory and rename it."""
+#     if not os.path.exists(f"{TVM_PATH}/{project}"):
+#         tutor_version = project.split("@")[0]
+#         tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
 
-        tvm_project = f"{TVM_PATH}/{project}"
-        copy_tree(tutor_version_folder, tvm_project)
+#         tvm_project = f"{TVM_PATH}/{project}"
+#         copy_tree(tutor_version_folder, tvm_project)
 
-        shutil.rmtree(f"{tvm_project}/venv")
-        setup_version_virtualenv(project)
+#         shutil.rmtree(f"{tvm_project}/venv")
+#         setup_version_virtualenv(project)
 
 
 @click.command(name="init")
@@ -464,38 +466,42 @@ def init(name: str = None, version: str = None):
     if not os.path.exists(tvm_environment):
         pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
 
-        # Create config json
-        tvm_project_config_file = f"{tvm_environment}/config.json"
-        data = {
-            "version": f"{version}",
-            "tutor_root": f"{tvm_project_folder}",
-            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        }
-        with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
-            json.dump(data, info_file, indent=4)
+        repository = EnvironmentManagerGitRepository()
+        initialize = TutorProjectInit(repository=repository)
+        initialize(version, tvm_project_folder)
 
-        # Create activate script
-        context = {
-            "version": f"{version}",
-            "tutor_root": f"{tvm_project_folder}",
-            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        }
-        activate_script = f"{tvm_environment}/bin/activate"
-        with open(activate_script, 'w', encoding='utf-8') as activate_file:
-            activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
+        # # Create config json
+        # tvm_project_config_file = f"{tvm_environment}/config.json"
+        # data = {
+        #     "version": f"{version}",
+        #     "tutor_root": f"{tvm_project_folder}",
+        #     "tutor_plugins_root": f"{tvm_project_folder}/plugins"
+        # }
+        # with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
+        #     json.dump(data, info_file, indent=4)
 
-        # Create tutor switcher
-        context = {
-            'version': data.get('version', None),
-            'tvm': f"{TVM_PATH}",
-        }
-        tutor_file = f"{tvm_environment}/bin/tutor"
-        with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
-            switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
-        # set execute permissions
-        os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+        # # Create activate script
+        # context = {
+        #     "version": f"{version}",
+        #     "tutor_root": f"{tvm_project_folder}",
+        #     "tutor_plugins_root": f"{tvm_project_folder}/plugins"
+        # }
+        # activate_script = f"{tvm_environment}/bin/activate"
+        # with open(activate_script, 'w', encoding='utf-8') as activate_file:
+        #     activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
 
-        create_project(project=version)
+        # # Create tutor switcher
+        # context = {
+        #     'version': data.get('version', None),
+        #     'tvm': f"{TVM_PATH}",
+        # }
+        # tutor_file = f"{tvm_environment}/bin/tutor"
+        # with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
+        #     switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
+        # # set execute permissions
+        # os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+
+        # create_project(project=version)
     else:
         raise click.UsageError('There is already a project initiated.') from IndexError
 
