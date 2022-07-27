@@ -1,0 +1,2 @@
+class ProjectNameFormatError(Exception):
+    pass

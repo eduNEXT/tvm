@@ -165,11 +165,14 @@ class VersionManagerGitRepository(VersionManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List):
+    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):
         """Use virtual environment to run command."""
+        if not version:
+            version = self.current_version(self.TVM_PATH)
+
         try:
             subprocess.run(
-                f"source {self.TVM_PATH}/venv/bin/activate;" f'pip {" ".join(options)}',
+                f"source {self.TVM_PATH}/{version}/venv/bin/activate;" f'pip {" ".join(options)}',
                 shell=True,
                 check=True,
                 executable="/bin/bash",
@@ -177,11 +180,11 @@ class VersionManagerGitRepository(VersionManagerRepository):
         except subprocess.CalledProcessError as ex:
             raise Exception(f"Error running venv commands: {ex.output}") from ex
 
-    def install_plugin(self, options: List) -> None:
+    def install_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Install plugin for virtual environment."""
         self.run_command_in_virtualenv(options)
 
-    def uninstall_plugin(self, options: List) -> None:
+    def uninstall_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Uninstall plugin for virtual environment."""
         self.run_command_in_virtualenv(options)
 

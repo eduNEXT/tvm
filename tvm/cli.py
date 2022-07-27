@@ -9,7 +9,6 @@ import stat
 import string
 import subprocess
 import sys
-from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
 from typing import Optional
 
@@ -18,6 +17,8 @@ import requests
 from click.shell_completion import CompletionItem
 
 from tvm import __version__
+from tvm.environment_manager.application.plugin_installer import PluginInstaller
+from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
 from tvm.environment_manager.application.tutor_project_init import TutorProjectInit
 from tvm.environment_manager.infrastructure.environment_manager_git_repository import EnvironmentManagerGitRepository
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
@@ -466,42 +467,9 @@ def init(name: str = None, version: str = None):
     if not os.path.exists(tvm_environment):
         pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
 
-        repository = EnvironmentManagerGitRepository()
+        repository = EnvironmentManagerGitRepository(project_path=f"{tvm_project_folder}")
         initialize = TutorProjectInit(repository=repository)
-        initialize(version, tvm_project_folder)
-
-        # # Create config json
-        # tvm_project_config_file = f"{tvm_environment}/config.json"
-        # data = {
-        #     "version": f"{version}",
-        #     "tutor_root": f"{tvm_project_folder}",
-        #     "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        # }
-        # with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
-        #     json.dump(data, info_file, indent=4)
-
-        # # Create activate script
-        # context = {
-        #     "version": f"{version}",
-        #     "tutor_root": f"{tvm_project_folder}",
-        #     "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        # }
-        # activate_script = f"{tvm_environment}/bin/activate"
-        # with open(activate_script, 'w', encoding='utf-8') as activate_file:
-        #     activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
-
-        # # Create tutor switcher
-        # context = {
-        #     'version': data.get('version', None),
-        #     'tvm': f"{TVM_PATH}",
-        # }
-        # tutor_file = f"{tvm_environment}/bin/tutor"
-        # with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
-        #     switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
-        # # set execute permissions
-        # os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-
-        # create_project(project=version)
+        initialize(version)
     else:
         raise click.UsageError('There is already a project initiated.') from IndexError
 
@@ -512,23 +480,29 @@ def install_plugin(options):
     """Use the package installer pip in current tutor version."""
     options = list(options)
     options.insert(0, "install")
+
     if "TVM_PROJECT_ENV" in os.environ:
-        run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
+        repository = EnvironmentManagerGitRepository(os.environ.get("TVM_PROJECT_ENV"))
+        installer = PluginInstaller(repository=repository)
     else:
         repository = VersionManagerGitRepository()
         installer = TutorPluginInstaller(repository=repository)
-        installer(options)
+    installer(options)
 
 
 @click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def uninstall_plugin(options):
     """Use the package installer pip in current tutor version."""
-    repository = VersionManagerGitRepository()
-    uninstaller = TutorPluginUninstaller(repository=repository)
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
+    if "TVM_PROJECT_ENV" in os.environ:
+        repository = EnvironmentManagerGitRepository(os.environ.get("TVM_PROJECT_ENV"))
+        uninstaller = PluginUninstaller(repository=repository)
+    else:
+        repository = VersionManagerGitRepository()
+        uninstaller = TutorPluginUninstaller(repository=repository)
     uninstaller(options)
 
 
