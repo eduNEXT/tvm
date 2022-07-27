@@ -4,7 +4,6 @@ import os
 import pathlib
 import random
 import re
-import shutil
 import stat
 import string
 import subprocess
@@ -19,10 +18,9 @@ from click.shell_completion import CompletionItem
 from tvm import __version__
 from tvm.environment_manager.application.plugin_installer import PluginInstaller
 from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
-from tvm.environment_manager.application.tutor_project_init import TutorProjectInit
+from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
 from tvm.environment_manager.infrastructure.environment_manager_git_repository import EnvironmentManagerGitRepository
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
-from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
 from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller
 from tvm.version_manager.application.tutor_version_enabler import TutorVersionEnabler
@@ -131,20 +129,6 @@ def setup_tvm():
         subprocess.call(['sudo', 'ln', '-s', tutor_switcher, '/usr/local/bin/tutor'])
     except FileExistsError:
         pass
-
-
-# def setup_version_virtualenv(version=None) -> None:
-#     """Create virtualenv and install tutor cloned."""
-#     # Create virtualenv
-#     subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-#                    shell=True, check=True,
-#                    executable='/bin/bash')
-
-#     # Install tutor
-#     subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-#                    f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
-#                    shell=True, check=True,
-#                    executable='/bin/bash')
 
 
 @click.command(name="list")
@@ -431,19 +415,6 @@ def projects() -> None:
     """Hold the main wrapper for the `tvm project` command."""
 
 
-# def create_project(project: str) -> None:
-#     """Duplicate the version directory and rename it."""
-#     if not os.path.exists(f"{TVM_PATH}/{project}"):
-#         tutor_version = project.split("@")[0]
-#         tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
-
-#         tvm_project = f"{TVM_PATH}/{project}"
-#         copy_tree(tutor_version_folder, tvm_project)
-
-#         shutil.rmtree(f"{tvm_project}/venv")
-#         setup_version_virtualenv(project)
-
-
 @click.command(name="init")
 @click.argument('name', required=False)
 @click.argument('version', required=False)
@@ -468,7 +439,7 @@ def init(name: str = None, version: str = None):
         pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
 
         repository = EnvironmentManagerGitRepository(project_path=f"{tvm_project_folder}")
-        initialize = TutorProjectInit(repository=repository)
+        initialize = TutorProjectCreator(repository=repository)
         initialize(version)
     else:
         raise click.UsageError('There is already a project initiated.') from IndexError
