@@ -2,24 +2,21 @@
 import json
 import os
 import pathlib
-import random
 import re
 import stat
-import string
 import subprocess
 import sys
 from distutils.version import LooseVersion
 from typing import Optional
 
 import click
-import requests
 from click.shell_completion import CompletionItem
 
 from tvm import __version__
 from tvm.environment_manager.application.plugin_installer import PluginInstaller
 from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
 from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
-from tvm.settings import version_manager, environment_manager
+from tvm.settings import environment_manager, version_manager
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
 from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller

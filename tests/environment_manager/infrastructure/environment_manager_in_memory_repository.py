@@ -1,6 +1,5 @@
 from typing import List
 
-from tvm.environment_manager.domain.project_name import ProjectName
 from tvm.environment_manager.domain.environment_manager_repository import (
     EnvironmentManagerRepository,
 )
