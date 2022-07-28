@@ -1,2 +1,5 @@
+"""Project name format error."""
+
+
 class ProjectNameFormatError(Exception):
-    pass
+    """Project name format error exception."""

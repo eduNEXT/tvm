@@ -6,11 +6,11 @@ import shutil
 import stat
 import subprocess
 import zipfile
+from datetime import timedelta
 from typing import List, Optional
 
 import requests
 import requests_cache
-from datetime import timedelta
 
 from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.version_manager.domain.tutor_version import TutorVersion
@@ -175,7 +175,7 @@ class VersionManagerGitRepository(VersionManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):
+    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):  # pylint: duplicate-code
         """Use virtual environment to run command."""
         if not version:
             version = self.current_version(self.TVM_PATH)

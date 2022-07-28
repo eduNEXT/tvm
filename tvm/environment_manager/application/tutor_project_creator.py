@@ -1,7 +1,5 @@
 """Tutor project initialize."""
-from tvm.environment_manager.domain.environment_manager_repository import (
-    EnvironmentManagerRepository,
-)
+from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
 
 
 class TutorProjectCreator:

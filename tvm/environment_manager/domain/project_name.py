@@ -1,9 +1,11 @@
+"""Project name domain."""
 import re
 
 from tvm.environment_manager.domain.project_name_format_error import ProjectNameFormatError
 
 
 class ProjectName(str):
+    """Project name fotmat."""
 
     def __init__(self, value: str):  # pylint: disable=super-init-not-called
         """Raise BadParameter if the value is not a project name."""

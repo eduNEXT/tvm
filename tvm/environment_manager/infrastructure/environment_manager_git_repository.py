@@ -1,19 +1,14 @@
 """Actions to initialize a project."""
-from distutils.dir_util import copy_tree
 import json
 import os
 import pathlib
 import shutil
-import stat
 import subprocess
+from distutils.dir_util import copy_tree
 from typing import List
 
-from tvm.environment_manager.domain.environment_manager_repository import (
-    EnvironmentManagerRepository,
-)
+from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
 from tvm.environment_manager.domain.project_name import ProjectName
-
-from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 
 TVM_PATH = pathlib.Path.home() / ".tvm"
@@ -23,6 +18,7 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
     """Principals commands to manage TVM."""
 
     def __init__(self, project_path: str) -> None:
+        """Initialize usefull variables."""
         self.PROJECT_PATH = project_path
         self.TVM_ENVIRONMENT = f"{project_path}/.tvm"
 
@@ -39,13 +35,14 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         self.create_project(version)
 
     def current_version(self) -> ProjectName:
+        """Project name in current version."""
         info_file_path = f"{self.TVM_ENVIRONMENT}/config.json"
         with open(info_file_path, "r", encoding="utf-8") as info_file:
             data = json.load(info_file)
         return ProjectName(data.get("version"))
 
     def create_config_json(self, data: dict) -> None:
-        """Create configuration json file"""
+        """Create configuration json file."""
         tvm_project_config_file = f"{self.TVM_ENVIRONMENT}/config.json"
         with open(tvm_project_config_file, "w", encoding="utf-8") as info_file:
             json.dump(data, info_file, indent=4)
@@ -91,7 +88,7 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List, name: ProjectName = None):
+    def run_command_in_virtualenv(self, options: List, name: ProjectName = None):  # pylint: duplicate-code
         """Use virtual environment to run command."""
         if not name:
             name = self.current_version()
@@ -108,7 +105,9 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             raise Exception(f"Error running venv commands: {ex.output}") from ex
 
     def install_plugin(self, options: List) -> None:
+        """Install a tutor version."""
         self.run_command_in_virtualenv(options=options)
 
     def uninstall_plugin(self, options: List) -> None:
+        """Uninstall a tutor version."""
         self.run_command_in_virtualenv(options=options)

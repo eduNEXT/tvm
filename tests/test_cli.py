@@ -3,7 +3,7 @@ import pytest
 from click.exceptions import BadParameter
 from click.testing import CliRunner
 
-from tvm.cli import cli, install, uninstall, validate_version, projects
+from tvm.cli import cli, install, validate_version, projects
 
 
 def test_should_return_all_tvm_cli_commands():
