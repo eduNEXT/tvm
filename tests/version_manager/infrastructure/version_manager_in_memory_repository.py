@@ -41,13 +41,13 @@ class VersionManagerInMemoryRepository(VersionManagerRepository):
     def version_is_installed(version: str) -> None:
         pass
 
-    def install_plugin(self, options: List) -> None:
+    def install_plugin(self, options: List, version: str = None) -> None:
         if options:
             self.PLUGINS_INSTALLED.append(options)
         else:
             raise Exception(f"Error running venv commands: None")
 
-    def uninstall_plugin(self, options: List) -> None:
+    def uninstall_plugin(self, options: List, version: str = None) -> None:
         if options == self.PLUGINS_INSTALLED[0]:
             self.PLUGINS_INSTALLED.clear()
         else:
