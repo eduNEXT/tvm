@@ -6,10 +6,13 @@ import shutil
 import stat
 import subprocess
 import zipfile
+from datetime import timedelta
 from typing import List, Optional
 
 import requests
+import requests_cache
 
+from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.version_manager.domain.tutor_version import TutorVersion
 from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
 from tvm.version_manager.domain.version_manager_repository import VersionManagerRepository
@@ -24,8 +27,9 @@ class VersionManagerGitRepository(VersionManagerRepository):
     ZIPPBALL_URL = "https://api.github.com/repos/overhangio/tutor/zipball/refs/tags/"
     TVM_PATH = pathlib.Path.home() / ".tvm"
 
-    def __init__(self) -> None:
+    def __init__(self, logger: ClientLoggerRepository) -> None:
         """init."""
+        self.logger = logger
         self.setup()
 
     def setup(self):
@@ -47,6 +51,11 @@ class VersionManagerGitRepository(VersionManagerRepository):
         try:
             os.symlink(f"{self.TVM_PATH}/tutor_switcher", "/usr/local/bin/tutor")
         except PermissionError:
+            self.logger.echo(
+                "Don't Worry, TVM just needs sudo permissions to create the tutor_switcher's symlink"
+                "in /usr/local/bin/tutor.\n"
+                "You can find more information about it in our docs."
+            )
             subprocess.call(
                 [
                     "sudo",
@@ -98,8 +107,9 @@ class VersionManagerGitRepository(VersionManagerRepository):
             switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
         )
 
-    def get_version_from_api(self, limit: int = 10):
+    def get_version_from_api(self, limit: int = 100):
         """Return api information form request."""
+        requests_cache.install_cache('github_cache', expire_after=timedelta(days=1))
         api_info = requests.get(f"{self.VERSIONS_URL}?per_page={limit}").json()
         return api_info
 
@@ -165,11 +175,14 @@ class VersionManagerGitRepository(VersionManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List):
+    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):  # pylint: duplicate-code
         """Use virtual environment to run command."""
+        if not version:
+            version = self.current_version(self.TVM_PATH)
+
         try:
             subprocess.run(
-                f"source {self.TVM_PATH}/venv/bin/activate;" f'pip {" ".join(options)}',
+                f"source {self.TVM_PATH}/{version}/venv/bin/activate;" f'pip {" ".join(options)}',
                 shell=True,
                 check=True,
                 executable="/bin/bash",
@@ -177,11 +190,11 @@ class VersionManagerGitRepository(VersionManagerRepository):
         except subprocess.CalledProcessError as ex:
             raise Exception(f"Error running venv commands: {ex.output}") from ex
 
-    def install_plugin(self, options: List) -> None:
+    def install_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Install plugin for virtual environment."""
         self.run_command_in_virtualenv(options)
 
-    def uninstall_plugin(self, options: List) -> None:
+    def uninstall_plugin(self, options: List, version: TutorVersion = None) -> None:
         """Uninstall plugin for virtual environment."""
         self.run_command_in_virtualenv(options)
 

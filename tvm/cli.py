@@ -2,24 +2,22 @@
 import json
 import os
 import pathlib
-import random
 import re
-import shutil
 import stat
-import string
 import subprocess
 import sys
-from distutils.dir_util import copy_tree
 from distutils.version import LooseVersion
 from typing import Optional
 
 import click
-import requests
 from click.shell_completion import CompletionItem
 
 from tvm import __version__
+from tvm.environment_manager.application.plugin_installer import PluginInstaller
+from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
+from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
+from tvm.settings import environment_manager, version_manager
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
-from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
 from tvm.version_manager.application.tutor_plugin_uninstaller import TutorPluginUninstaller
 from tvm.version_manager.application.tutor_version_enabler import TutorVersionEnabler
@@ -29,7 +27,6 @@ from tvm.version_manager.application.tutor_version_uninstaller import TutorVersi
 from tvm.version_manager.application.tutor_vesion_lister import TutorVersionLister
 from tvm.version_manager.domain.tutor_version_format_error import TutorVersionFormatError
 from tvm.version_manager.domain.tutor_version_is_not_installed import TutorVersionIsNotInstalled
-from tvm.version_manager.infrastructure.version_manager_git_repository import VersionManagerGitRepository
 
 VERSIONS_URL = "https://api.github.com/repos/overhangio/tutor/tags"
 TVM_PATH = pathlib.Path.home() / '.tvm'
@@ -130,90 +127,33 @@ def setup_tvm():
         pass
 
 
-def setup_version_virtualenv(version=None) -> None:
-    """Create virtualenv and install tutor cloned."""
-    # Create virtualenv
-    subprocess.run(f'cd {TVM_PATH}/{version}; virtualenv venv',
-                   shell=True, check=True,
-                   executable='/bin/bash')
-
-    # Install tutor
-    subprocess.run(f'source {TVM_PATH}/{version}/venv/bin/activate;'
-                   f'pip install -e {TVM_PATH}/{version}/overhangio-tutor-*/',
-                   shell=True, check=True,
-                   executable='/bin/bash')
-
-
 @click.command(name="list")
-@click.option("-l", "--limit", default=10, help="number of `latest versions` to list")
+@click.option("-l", "--limit", default=100, help="number of `latest versions` to list")
 def list_versions(limit: int):
     """
     Get all the versions from github.
 
     Print and mark the both the installed ones and the current.
     """
-    repository = VersionManagerGitRepository()
-    lister = TutorVersionLister(repository=repository)
+    lister = TutorVersionLister(repository=version_manager)
     version_names = lister(limit=limit)
-    version_names = sorted(version_names, reverse=True, key=LooseVersion)
-    local_versions = repository.local_versions(TVM_PATH)
-    global_active = repository.current_version(TVM_PATH)
+    local_versions = version_manager.local_versions(f"{TVM_PATH}")
+    version_names = list(set(version_names + local_versions))
+    version_names = sorted(version_names, reverse=False, key=LooseVersion)
+    global_active = version_manager.current_version(f"{TVM_PATH}")
     project_version = None
 
     if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        project_version = repository.current_version()
     for name in version_names:
-        color = "yellow"
+        color = "white"
         if name in local_versions:
             color = "green"
-        if name == global_active:
-            if project_version:
-                color = "blue"
-                name = f"{name} (global)"
-            else:
-                name = f"{name} (active)"
+        if name == global_active and not project_version:
+            name = f"{name} (active)"
         if project_version and project_version == name:
             name = f"{name} (active)"
-        click.echo(click.style(name, fg=color))
-
-
-@click.command(name="list")
-@click.option('-l', '--limit', default=10, help='number of `latest versions` to list')
-def list_versions_backup(limit: int):
-    """
-    Get all the versions from github.
-
-    Print and mark the both the installed ones and the current.
-    """
-    # from github
-    api_info = requests.get(f'{VERSIONS_URL}?per_page={limit}').json()
-    api_versions = [x.get('name') for x in api_info]
-
-    # from the local .tvm
-    local_versions = get_local_versions()
-
-    click.echo(f'Listing the latest {limit} versions of tutor')
-    version_names = list(set(api_versions + local_versions))
-    version_names = sorted(version_names, reverse=True, key=LooseVersion)
-
-    project_version = None
-    if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
-
-    global_active = get_active_version()
-
-    for name in version_names:
-        color = 'yellow'
-        if name in local_versions:
-            color = 'green'
-        if name == global_active:
-            if project_version:
-                color = 'blue'
-                name = f'{name} (global)'
-            else:
-                name = f'{name} (active)'
-        if project_version and project_version == name:
-            name = f'{name} (active)'
         click.echo(click.style(name, fg=color))
 
 
@@ -221,8 +161,7 @@ def list_versions_backup(limit: int):
 @click.argument('version', required=True)
 def install(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    repository = VersionManagerGitRepository()
-    finder = TutorVersionFinder(repository=repository)
+    finder = TutorVersionFinder(repository=version_manager)
     tutor_version = finder(version=version)
     try:
         if not tutor_version:
@@ -232,7 +171,7 @@ def install(version: str):
     except Exception as err:
         raise click.UsageError(f'Could not find target: {version}') from err
 
-    installer = TutorVersionInstaller(repository=repository)
+    installer = TutorVersionInstaller(repository=version_manager)
     installer(version=tutor_version)
 
 
@@ -240,8 +179,7 @@ def install(version: str):
 @click.argument('version', required=True)
 def uninstall(version: str):
     """Install the given VERSION of tutor in the .tvm directory."""
-    repository = VersionManagerGitRepository()
-    uninstaller = TutorVersionUninstaller(repository=repository)
+    uninstaller = TutorVersionUninstaller(repository=version_manager)
     try:
         uninstaller(version=version)
         click.echo(click.style(
@@ -262,14 +200,6 @@ def get_active_version() -> str:
             data = json.load(info_file)
         return data.get('version', 'Invalid active version')
     return 'No active version installed'
-
-
-def get_project_version(tvm_project_path) -> str:
-    """Read the current active version from the json/bash switcher."""
-    info_file_path = f'{tvm_project_path}/config.json'
-    with open(info_file_path, 'r', encoding='utf-8') as info_file:
-        data = json.load(info_file)
-    return data.get('version')
 
 
 def get_current_info(file: str = None) -> Optional[dict]:
@@ -335,16 +265,16 @@ def set_switch_from_file(file: str = None) -> None:
 @click.argument('version', required=True)
 def use(version: str):
     """Configure the path to use VERSION."""
-    repository = VersionManagerGitRepository()
-    enabler = TutorVersionEnabler(repository=repository)
+    enabler = TutorVersionEnabler(repository=version_manager)
     try:
-        if not VersionManagerGitRepository.version_is_installed(version=version):
+        if not version_manager.version_is_installed(version=version):
             raise Exception
         enabler(version=version)
     except TutorVersionFormatError as format_err:
         raise click.UsageError(f"{format_err}")
-    except Exception as error:
-        raise click.UsageError(f'The version {version} is not installed.') from error
+    except Exception:
+        raise click.ClickException(f'The version {version} is not installed you should install it before using it.\n'
+                                   f'You could run the command `tvm install {version}` to install it.')
 
 
 def get_env_by_tutor_version(version):
@@ -395,7 +325,8 @@ def list_plugins():
     """List installed plugins by tutor version."""
     project_version = None
     if "TVM_PROJECT_ENV" in os.environ:
-        project_version = get_project_version(os.environ.get("TVM_PROJECT_ENV"))
+        repository = environment_manager(project_path=os.environ.get("TVM_PROJECT_ENV"))
+        project_version = repository.current_version()
 
     global_active = get_active_version()
 
@@ -403,11 +334,8 @@ def list_plugins():
     for version in local_versions:
         version = str(version)
 
-        if version == global_active:
-            if project_version:
-                click.echo(click.style(f"{version} (global)", fg='blue'))
-            else:
-                click.echo(click.style(f"{version} (active)", fg='green'))
+        if version == global_active and not project_version:
+            click.echo(click.style(f"{version} (active)", fg='green'))
         elif project_version and version == project_version:
             click.echo(click.style(f"{version} (active)", fg='green'))
         else:
@@ -428,19 +356,6 @@ def projects() -> None:
     """Hold the main wrapper for the `tvm project` command."""
 
 
-def create_project(project: str) -> None:
-    """Duplicate the version directory and rename it."""
-    if not os.path.exists(f"{TVM_PATH}/{project}"):
-        tutor_version = project.split("@")[0]
-        tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
-
-        tvm_project = f"{TVM_PATH}/{project}"
-        copy_tree(tutor_version_folder, tvm_project)
-
-        shutil.rmtree(f"{tvm_project}/venv")
-        setup_version_virtualenv(project)
-
-
 @click.command(name="init")
 @click.argument('name', required=False)
 @click.argument('version', required=False)
@@ -452,50 +367,21 @@ def init(name: str = None, version: str = None):
     if not version_is_installed(version):
         raise click.UsageError(f'Could not find target: {version}')
 
-    if not name:
-        letters = string.ascii_letters
-        name = ''.join(random.choice(letters) for i in range(10))
+    if name:
+        tvm_project_folder = pathlib.Path().resolve() / name
+    else:
+        name = f"{pathlib.Path().resolve()}".split("/")[-1]
+        tvm_project_folder = pathlib.Path().resolve()
 
     version = f"{version}@{name}"
-
-    tvm_project_folder = pathlib.Path().resolve()
     tvm_environment = tvm_project_folder / '.tvm'
 
     if not os.path.exists(tvm_environment):
         pathlib.Path(f"{tvm_environment}/bin").mkdir(parents=True, exist_ok=True)
 
-        # Create config json
-        tvm_project_config_file = f"{tvm_environment}/config.json"
-        data = {
-            "version": f"{version}",
-            "tutor_root": f"{tvm_project_folder}",
-            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        }
-        with open(tvm_project_config_file, 'w', encoding='utf-8') as info_file:
-            json.dump(data, info_file, indent=4)
-
-        # Create activate script
-        context = {
-            "version": f"{version}",
-            "tutor_root": f"{tvm_project_folder}",
-            "tutor_plugins_root": f"{tvm_project_folder}/plugins"
-        }
-        activate_script = f"{tvm_environment}/bin/activate"
-        with open(activate_script, 'w', encoding='utf-8') as activate_file:
-            activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
-
-        # Create tutor switcher
-        context = {
-            'version': data.get('version', None),
-            'tvm': f"{TVM_PATH}",
-        }
-        tutor_file = f"{tvm_environment}/bin/tutor"
-        with open(tutor_file, 'w', encoding='utf-8') as switcher_file:
-            switcher_file.write(TUTOR_SWITCHER_TEMPLATE.render(**context))
-        # set execute permissions
-        os.chmod(tutor_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-
-        create_project(project=version)
+        repository = environment_manager(project_path=f"{tvm_project_folder}")
+        initialize = TutorProjectCreator(repository=repository)
+        initialize(version)
     else:
         raise click.UsageError('There is already a project initiated.') from IndexError
 
@@ -506,23 +392,27 @@ def install_plugin(options):
     """Use the package installer pip in current tutor version."""
     options = list(options)
     options.insert(0, "install")
+
     if "TVM_PROJECT_ENV" in os.environ:
-        run_on_tutor_venv('pip', options, version=get_project_version(os.environ.get("TVM_PROJECT_ENV")))
+        repository = environment_manager(os.environ.get("TVM_PROJECT_ENV"))
+        installer = PluginInstaller(repository=repository)
     else:
-        repository = VersionManagerGitRepository()
-        installer = TutorPluginInstaller(repository=repository)
-        installer(options)
+        installer = TutorPluginInstaller(repository=version_manager)
+    installer(options)
 
 
 @click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def uninstall_plugin(options):
     """Use the package installer pip in current tutor version."""
-    repository = VersionManagerGitRepository()
-    uninstaller = TutorPluginUninstaller(repository=repository)
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
+    if "TVM_PROJECT_ENV" in os.environ:
+        repository = environment_manager(os.environ.get("TVM_PROJECT_ENV"))
+        uninstaller = PluginUninstaller(repository=repository)
+    else:
+        uninstaller = TutorPluginUninstaller(repository=version_manager)
     uninstaller(options)
 
 
