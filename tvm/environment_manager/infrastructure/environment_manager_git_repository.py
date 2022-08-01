@@ -22,17 +22,17 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         self.PROJECT_PATH = project_path
         self.TVM_ENVIRONMENT = f"{project_path}/.tvm"
 
-    def project_creator(self, version: str) -> None:
+    def project_creator(self, project_name: ProjectName) -> None:
         """Initialize tutor project."""
         data = {
-            "version": f"{version}",
+            "version": f"{project_name}",
             "tutor_root": f"{self.PROJECT_PATH}",
             "tutor_plugins_root": f"{self.PROJECT_PATH}/plugins",
         }
 
         self.create_config_json(data)
         self.create_active_script(data)
-        self.create_project(version)
+        self.create_project(project_name)
 
     def current_version(self) -> ProjectName:
         """Project name in current version."""
@@ -56,17 +56,17 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         with open(activate_script, "w", encoding="utf-8") as activate_file:
             activate_file.write(TVM_ACTIVATE_SCRIPT.render(**context))
 
-    def create_project(self, project: str) -> None:
+    def create_project(self, project_name: ProjectName) -> None:
         """Duplicate the version directory and rename it."""
-        if not os.path.exists(f"{TVM_PATH}/{project}"):
-            tutor_version = project.split("@")[0]
+        if not os.path.exists(f"{TVM_PATH}/{project_name}"):
+            tutor_version = project_name.split("@")[0]
             tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
 
-            tvm_project = f"{TVM_PATH}/{project}"
+            tvm_project = f"{TVM_PATH}/{project_name}"
             copy_tree(tutor_version_folder, tvm_project)
 
             shutil.rmtree(f"{tvm_project}/venv")
-            self.setup_version_virtualenv(project)
+            self.setup_version_virtualenv(project_name)
 
     @staticmethod
     def setup_version_virtualenv(version=None) -> None:

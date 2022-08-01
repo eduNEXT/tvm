@@ -2,12 +2,14 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from tvm.environment_manager.domain.project_name import ProjectName
+
 
 class EnvironmentManagerRepository(ABC):
     """Administrate environment manager repository methods."""
 
     @abstractmethod
-    def project_creator(self, version) -> None:
+    def project_creator(self, project_name: ProjectName) -> None:
         """Tutor Project Init to environment manager."""
 
     @abstractmethod

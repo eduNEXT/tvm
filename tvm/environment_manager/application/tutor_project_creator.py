@@ -1,5 +1,6 @@
 """Tutor project initialize."""
 from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
+from tvm.environment_manager.domain.project_name import ProjectName
 
 
 class TutorProjectCreator:
@@ -9,6 +10,7 @@ class TutorProjectCreator:
         """init."""
         self.repository = repository
 
-    def __call__(self, version) -> None:
+    def __call__(self, version: str) -> None:
         """call."""
-        self.repository.project_creator(version)
+        project_name = ProjectName(version)
+        self.repository.project_creator(project_name)
