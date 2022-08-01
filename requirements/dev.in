@@ -10,4 +10,3 @@ coverage
 pytest
 pudb
 requests
-requests-cache
