@@ -16,6 +16,10 @@ To create a new project you should call ``tvm project init``, this configures a 
 
 You can create different projects with the same tutor version, you have 2 options:
 
+**Note:** You could use ``tvm project init project-name``, now TVM will create a new folder with that name and in this folder host the project.
+
+If ``project-name`` isn't specified TVM will create a project in the current folder and configure it with that name.
+
 - Use the global active version.
 
 .. code-block:: bash  
@@ -25,11 +29,11 @@ You can create different projects with the same tutor version, you have 2 option
     mkdir your-project && cd your-project
     tvm project init
     
-- Use a specific installed version, this creates a new folder with the ``project-name`` to host it.
+- Use a specific installed version. 
 
 .. code-block:: bash  
     
-    # Specify the version
+    # Specify the version and the project name
     
     tvm project init project-name v14.0.0
     
@@ -38,7 +42,9 @@ You can create different projects with the same tutor version, you have 2 option
 Activate / Deactivate a project
 -------------------------------
 
-To activate a project you should run
+**Activate**
+
+This will active a virtualenv with python, pip, and tutor. To activate a project you should run:
 
 .. code-block:: bash
     
@@ -49,6 +55,7 @@ To activate a project you should run
     
     [v14.0.0@project-name] os:~/project-name$
     
+**Deactivate**
     
 To disable a project you should run ``tvmoff``
 
@@ -80,18 +87,29 @@ Manage a plugin in your project
 
 **Install**
 
-To install a tutor plugin in the current tutor version you should use ``pip install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>``
+To install a tutor plugin in the current tutor version you should use ``pip install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>`` or ``tvm plugins install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>``
+only in the current project .
 
 .. code-block:: bash
     
+    # use pip
     pip install tutor-plugin
     pip install /home/user/tutor-plugin
     pip install git+https://github.com/user/tutor-plugin@vx.x.x
     
+    # use tvm
+    tvm plugins install tutor-plugin
+    tvm plugins install /home/user/tutor-plugin
+    tvm plugins install git+https://github.com/user/tutor-plugin@vx.x.x
+    
+    
     
 **List**
 
-List installed plugins with ``tvm plugins list`` or ``tutor plugins list``.
+List installed plugins with :
+
+- ``tvm plugins list``, show you plugins for each project, you can use inside or outside the project.
+- ``tutor plugins list``, show you plugins for the current project only if the project is active.
 
 
 **Uninstall**

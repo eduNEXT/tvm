@@ -78,6 +78,8 @@ To set ``TUTOR_ROOT`` and ``TUTOR_PLUGINS_ROOT`` variables you should call
     
     tvm config save /home/user/tutor-test
     
+**Note:**  ``TUTOR_ROOT`` and ``TUTOR_PLUGINS_ROOT`` must be absolute paths. 
+    
 - If you want to set a different TUTOR_PLUGINS_ROOT you should use the flag  ``--plugins-root="PATH"``
 
 .. code-block:: bash

@@ -24,19 +24,21 @@ Currently, there isn't a command to do it, if you want to upgrade it, please ins
 
 # Usage
 
-You can start using it with:
+## Quickstart
+
+Create and activate a project with:
 
 ```bash
 # Install a tutor version with
-# tutor version mananger v<TUTOR_VERSION>
-tvm install v13.2.0
+# tutor version mananger
+tvm install v<tutor-version>
 
 # Create a new project with
 # tutor environment manager
-tvm project tutor-project v13.2.0
+tvm project <project-name> v<tutor-version>
 
 # Move to the project
-cd tutor-project
+cd <project-name>
 
 # Activate it
 source .tvm/bin/activate
