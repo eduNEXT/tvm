@@ -1,10 +1,11 @@
 # What's TVM
 
-TVM is the acronym for Tutor Version Manager. It manages Tutor versions and enables switching between them.
+TVM is the acronym for:
+
+- **Tutor Version Manager:** manages the version of the tutor.
+- **Tutor enVironment Manager:** for creating project-based environments with tutor.
 
 # Installing TVM
-
-## GitHub
 
 Open a terminal and run:
 
@@ -24,48 +25,43 @@ Currently, there isn't a command to do it, if you want to upgrade it, please ins
 
 # Usage
 
-## Quickstart
+## Quickstart with TVM as enVironment Manager
 
-Create and activate a project with:
+Create and activate a new project with:
+
+1. Install a tutor version with tutor version manager
 
 ```bash
-# Install a tutor version with
-# tutor version mananger
 tvm install v<tutor-version>
+```
 
-# Create a new project with
-# tutor environment manager
+2. Create a new project with tutor environment manager
+
+```bash
 tvm project <project-name> v<tutor-version>
+```
 
-# Move to the project
+3. Open the project folder
+
+```bash
 cd <project-name>
+```
 
-# Activate it
+4. Activate the project environment
+
+```bash
 source .tvm/bin/activate
 ```
 
-## Tutor Version Manager
+Now you can start configuring and using your tutor instance, reference [tutor official documentation](https://docs.tutor.overhang.io/index.html).
 
-A version manager for tutor, allows you to install and use different versions of tutor via the command line.
+## User Guide
 
-Access the complete guide of tutor version manager
+If you want to see what else you can do, access the complete guide of:
 
-- [Manage a tutor version](https://github.com/eduNEXT/tvm/blob/master/docs/TutorVersionManager.rst#manage-a-tutor-version)
-- [Check tutor versions](https://github.com/eduNEXT/tvm/blob/master/docs/TutorVersionManager.rst#check-tutor-versions)
-- [Switching between tutor versions](https://github.com/eduNEXT/tvm/blob/master/docs/TutorVersionManager.rst#switching-between-tutor-versions)
-- [Configure tvm variables](https://github.com/eduNEXT/tvm/blob/master/docs/TutorVersionManager.rst#configure-tvm-variables)
-- [Manage a plugin in the current tutor version](https://github.com/eduNEXT/tvm/blob/master/docs/TutorVersionManager.rst#manage-a-plugin-in-the-current-tutor-version)
+- [**Tutor Version Manager**](/docs/TutorVersionManager.rst)
 
-## Tutor Environment Manager
-
-Tutor environment manager allows you to create one project and set one version for it.
-
-Access the complete guide of tutor version manager
-
-- [Creating a project](https://github.com/eduNEXT/tvm/blob/master/docs/TutorEnvironmentManager.rst#creating-a-project)
-- [Activate / Deactivate a project](https://github.com/eduNEXT/tvm/blob/master/docs/TutorEnvironmentManager.rst#activate--deactivate-a-project)
-- [Check your projects](https://github.com/eduNEXT/tvm/blob/master/docs/TutorEnvironmentManager.rst#check-your-projects)
-- [Manage a plugin in your project](https://github.com/eduNEXT/tvm/blob/master/docs/TutorEnvironmentManager.rst#manage-a-plugin-in-your-project)
+- [**Tutor enVironment Manager**](/docs/TutorEnvironmentManager.rst)
 
 # How to Contribute
 

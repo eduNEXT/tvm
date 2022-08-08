@@ -3,10 +3,13 @@ Tutor Environment Manager
 
 Tutor environment manager allows you to create one project and set one version for it.
 
-You will be able to continue using the `tutor version manager`_ commands in your project:
+**Note:** You can continue using the `tutor version manager`_ commands in your project. Example: ``tvm list``, ``tvm plugins list``.
 
-- tvm list
-- tvm plugins list
+
+.. contents:: **Table of contents**
+   :depth: 1
+   :local:
+   :backlinks: none
 
 
 Creating a project
@@ -26,14 +29,13 @@ If ``project-name`` isn't specified TVM will create a project in the current fol
     
     # Using the global active version
     
-    mkdir your-project && cd your-project
-    tvm project init
+    tvm project init project-name
     
 - Use a specific installed version. 
 
 .. code-block:: bash  
     
-    # Specify the version and the project name
+    # Specify the version
     
     tvm project init project-name v14.0.0
     
@@ -88,7 +90,7 @@ Manage a plugin in your project
 **Install**
 
 To install a tutor plugin in the current tutor version you should use ``pip install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>`` or ``tvm plugins install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>``
-only in the current project .
+only in the current project.
 
 .. code-block:: bash
     
@@ -108,7 +110,7 @@ only in the current project .
 
 List installed plugins with :
 
-- ``tvm plugins list``, show you plugins for each project, you can use inside or outside the project.
+- ``tvm plugins list``, show you plugins for each project, which you can use inside or outside the project.
 - ``tutor plugins list``, show you plugins for the current project only if the project is active.
 
 

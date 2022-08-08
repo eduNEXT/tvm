@@ -2,8 +2,14 @@
 Tutor Version Manager
 #####################
 
-tvm is a version manager for tutor, this allows you to install and use different versions of tutor via the command line. 
+TVM as a version manager for tutor, this allows you to install and use different versions of tutor via the command line. 
     
+
+.. contents:: **Table of contents**
+   :depth: 1
+   :local:
+   :backlinks: none
+
 
 Manage a tutor version
 -----------------------
@@ -55,7 +61,7 @@ To switch between tutor versions you should call ``tvm use v<TUTOR_VERSION_INSTA
     tvm use v14.0.0
  
     
-Configure tvm variables 
+Configure TVM variables 
 -----------------------
 
 **Save variables**
