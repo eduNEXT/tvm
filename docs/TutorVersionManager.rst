@@ -14,7 +14,7 @@ TVM as a version manager for tutor, this allows you to install and use different
 Manage a tutor version
 -----------------------
 
-**Install**
+**Install a tutor version**
 
 To install tutor you have to call ``tvm install v<TUTOR_VERSION>``
 
@@ -25,9 +25,9 @@ To install tutor you have to call ``tvm install v<TUTOR_VERSION>``
 
 If you don't know which are the tutor versions, you can use ``tvm list``
 
-**Uninstall**
+**Uninstall a tutor version**
 
-To Uninstall tutor you have to call ``tvm uninstall v<TUTOR_VERSION>``
+To uninstall tutor you have to call ``tvm uninstall v<TUTOR_VERSION>``
 
 
 
@@ -64,7 +64,7 @@ To switch between tutor versions you should call ``tvm use v<TUTOR_VERSION_INSTA
 Configure TVM variables 
 -----------------------
 
-**Save variables**
+**Save TVM variables**
 
 To set ``TUTOR_ROOT`` and ``TUTOR_PLUGINS_ROOT`` variables you should call
 
@@ -97,7 +97,7 @@ To set ``TUTOR_ROOT`` and ``TUTOR_PLUGINS_ROOT`` variables you should call
     
     tvm config save . --plugins-root="/home/user/tutor-test/plugins"
 
-**Remove variables**
+**Remove TVM variables**
 
 Use command ``tvm config clear`` to remove the actual configuration of ``TUTOR_ROOT`` and ``TUTOR_PLUGINS_ROOT`` 
 
@@ -105,7 +105,7 @@ Use command ``tvm config clear`` to remove the actual configuration of ``TUTOR_R
 Manage a plugin in the current tutor version
 ------------------------------------------------
 
-**Install**
+**Install a tutor plugin**
 
 To install a tutor plugin in the current tutor version you should call ``tvm plugins install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>``
 
@@ -116,14 +116,14 @@ To install a tutor plugin in the current tutor version you should call ``tvm plu
     tvm plugins install git+https://github.com/user/tutor-plugin@vx.x.x
     
     
-**List**
+**List a tutor plugin**
 
 List installed plugins by tutor version with ``tvm plugins list``, you can check the name, version and if the plugin is enabled/disabled (**the disabled notice depends on the active tutor configuration**).
 
 .. image:: images/tvm_plugins_list.png
 
 
-**Uninstall**
+**Uninstall a tutor plugin**
 
 To uninstall a tutor plugin in the current tutor version you should call ``tvm plugins uninstall <PLUGIN_NAME>``
 

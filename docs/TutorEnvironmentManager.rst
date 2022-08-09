@@ -87,7 +87,7 @@ Use ``tvm list`` to check the projects that had been created.
 Manage a plugin in your project
 -------------------------------
 
-**Install**
+**Install a tutor plugin**
 
 To install a tutor plugin in the current tutor version you should use ``pip install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>`` or ``tvm plugins install <PLUGIN_NAME/or/PLUGIN_LOCAL_PATH/or/PLUGIN_REPO>``
 only in the current project.
@@ -106,7 +106,7 @@ only in the current project.
     
     
     
-**List**
+**List a tutor plugin**
 
 List installed plugins with :
 
@@ -114,7 +114,7 @@ List installed plugins with :
 - ``tutor plugins list``, show you plugins for the current project only if the project is active.
 
 
-**Uninstall**
+**Uninstall a tutor plugin**
 
 To uninstall a tutor plugin in your project use ``tvm plugins uninstall <PLUGIN_NAME>`` or  ``pip uninstall <PLUGIN_NAME>`` 
 
