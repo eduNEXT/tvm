@@ -178,7 +178,7 @@ def install(version: str):
 @click.command(name="uninstall")
 @click.argument('version', required=True)
 def uninstall(version: str):
-    """Install the given VERSION of tutor in the .tvm directory."""
+    """Uninstall the given VERSION of tutor in the .tvm directory."""
     uninstaller = TutorVersionUninstaller(repository=version_manager)
     try:
         uninstaller(version=version)
@@ -404,7 +404,7 @@ def install_plugin(options):
 @click.command(name="uninstall", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def uninstall_plugin(options):
-    """Use the package installer pip in current tutor version."""
+    """Use the package uninstaller pip in current tutor version."""
     options = list(options)
     options.insert(0, "uninstall")
     options.append("-y")
