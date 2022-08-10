@@ -15,5 +15,5 @@ class TutorPluginUninstaller:
     def __call__(self, options: List, version: str = None) -> None:
         """call."""
         if version:
-            version = TutorVersion(version=version)
+            version = TutorVersion(value=version)
         self.repository.uninstall_plugin(options=options, version=version)

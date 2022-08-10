@@ -6,7 +6,6 @@ import shutil
 import stat
 import subprocess
 import zipfile
-from datetime import timedelta
 from typing import List, Optional
 
 import requests
@@ -173,7 +172,7 @@ class VersionManagerGitRepository(VersionManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):  # pylint: duplicate-code
+    def run_command_in_virtualenv(self, options: List, version: TutorVersion = None):
         """Use virtual environment to run command."""
         if not version:
             version = self.current_version(self.TVM_PATH)
@@ -181,6 +180,7 @@ class VersionManagerGitRepository(VersionManagerRepository):
         try:
             subprocess.run(
                 f"source {self.TVM_PATH}/{version}/venv/bin/activate;" f'pip {" ".join(options)}',
+                # pylint: disable=duplicate-code
                 shell=True,
                 check=True,
                 executable="/bin/bash",
