@@ -88,7 +88,7 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             executable="/bin/bash",
         )
 
-    def run_command_in_virtualenv(self, options: List, name: ProjectName = None):  # pylint: duplicate-code
+    def run_command_in_virtualenv(self, options: List, name: ProjectName = None):
         """Use virtual environment to run command."""
         if not name:
             name = self.current_version()
@@ -97,6 +97,7 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
             subprocess.run(
                 f"source {TVM_PATH}/{name}/venv/bin/activate;"
                 f'pip {" ".join(options)}',
+                # pylint: disable=duplicate-code
                 shell=True,
                 check=True,
                 executable="/bin/bash",

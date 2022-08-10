@@ -15,5 +15,5 @@ class TutorPluginInstaller:
     def __call__(self, options: List, version: TutorVersion = None) -> None:
         """call."""
         if version:
-            version = TutorVersion(version=version)
+            version = TutorVersion(value=version)
         self.repository.install_plugin(options=options, version=version)
