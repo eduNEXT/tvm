@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### [2.0.1] - 2022-08-25
+
+#### Changed
+
+- Add virtualenv to requirements
 ### [2.0.0] - 2022-08-10
 
 #### Changed
