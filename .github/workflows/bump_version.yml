@@ -44,7 +44,7 @@ jobs:
         with:
           branch: ${{ github.ref }}
           commit_message: "docs(bumpversion): ${{ steps.tag_version.outputs.previous_tag }} → ${{ steps.tag_version.outputs.new_version }}"
-          file_pattern: setup.cfg CHANGELOG.md eox_audit_model/*
+          file_pattern: setup.cfg CHANGELOG.md tvm/*
   release:
     needs: bumpversion
     if: needs.bumpversion.outputs.version
