@@ -6,7 +6,7 @@ import re
 import stat
 import subprocess
 import sys
-from distutils.version import LooseVersion
+from distutils.version import LooseVersion  # pylint: disable=W0402
 from typing import Optional
 
 import click

@@ -4,7 +4,7 @@ import os
 import pathlib
 import shutil
 import subprocess
-from distutils.dir_util import copy_tree
+from distutils.dir_util import copy_tree  # pylint: disable=W0402
 from typing import List
 
 from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
