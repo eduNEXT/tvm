@@ -10,7 +10,7 @@ TVM is the acronym for:
 Open a terminal and run:
 
 ```bash
-pip install git+https://github.com/eduNEXT/tvm.git@<TAG>
+pip install git+https://github.com/eduNEXT/tvm.git
 ```
 
 You can verify the installation with:
