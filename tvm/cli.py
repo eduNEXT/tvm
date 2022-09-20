@@ -157,10 +157,7 @@ def list_versions(limit: int):
         click.echo(click.style(name, fg=color))
 
 
-@click.command(name="install")
-@click.argument('version', required=True)
-def install(version: str):
-    """Install the given VERSION of tutor in the .tvm directory."""
+def install_tutor_version(version: str) -> None:
     finder = TutorVersionFinder(repository=version_manager)
     tutor_version = finder(version=version)
     try:
@@ -173,6 +170,13 @@ def install(version: str):
 
     installer = TutorVersionInstaller(repository=version_manager)
     installer(version=tutor_version)
+    
+
+@click.command(name="install")
+@click.argument('version', required=True)
+def install(version: str):
+    """Install the given VERSION of tutor in the .tvm directory."""
+    install_tutor_version(version=version)
 
 
 @click.command(name="uninstall")
@@ -261,10 +265,7 @@ def set_switch_from_file(file: str = None) -> None:
     os.chmod(switcher_file, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
 
-@click.command(name="use")
-@click.argument('version', required=True)
-def use(version: str):
-    """Configure the path to use VERSION."""
+def use_version(version: str) -> None:
     enabler = TutorVersionEnabler(repository=version_manager)
     try:
         if not version_manager.version_is_installed(version=version):
@@ -275,6 +276,12 @@ def use(version: str):
     except Exception as exc:
         raise click.ClickException(f'The version {version} is not installed you should install it before using it.\n'
                                    f'You could run the command `tvm install {version}` to install it.') from exc
+
+@click.command(name="use")
+@click.argument('version', required=True)
+def use(version: str):
+    """Configure the path to use VERSION."""
+    use_version(version=version)
 
 
 def get_env_by_tutor_version(version):
@@ -371,8 +378,8 @@ def init(name: str = None, version: str = None):
         version = lister(limit=1)[0]
 
     if not current_version:
-        subprocess.run(f"tvm install {version}", shell=True, check=True)
-        subprocess.run(f"tvm use {version}", shell=True, check=True)
+        install_tutor_version(version=version)
+        use_version(version=version)
 
     if name:
         tvm_project_folder = pathlib.Path().resolve() / name
@@ -485,7 +492,6 @@ cli.add_command(use)
 cli.add_command(projects)
 projects.add_command(init)
 cli.add_command(plugins)
-plugins.add_command(list_plugins)
 plugins.add_command(install_plugin)
 plugins.add_command(uninstall_plugin)
 cli.add_command(config)
