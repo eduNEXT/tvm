@@ -158,6 +158,7 @@ def list_versions(limit: int):
 
 
 def install_tutor_version(version: str) -> None:
+    """Install the given VERSION of tutor in the .tvm directory."""
     finder = TutorVersionFinder(repository=version_manager)
     tutor_version = finder(version=version)
     try:
@@ -170,7 +171,7 @@ def install_tutor_version(version: str) -> None:
 
     installer = TutorVersionInstaller(repository=version_manager)
     installer(version=tutor_version)
-    
+
 
 @click.command(name="install")
 @click.argument('version', required=True)
@@ -266,6 +267,7 @@ def set_switch_from_file(file: str = None) -> None:
 
 
 def use_version(version: str) -> None:
+    """Configure the path to use VERSION."""
     enabler = TutorVersionEnabler(repository=version_manager)
     try:
         if not version_manager.version_is_installed(version=version):
@@ -276,6 +278,7 @@ def use_version(version: str) -> None:
     except Exception as exc:
         raise click.ClickException(f'The version {version} is not installed you should install it before using it.\n'
                                    f'You could run the command `tvm install {version}` to install it.') from exc
+
 
 @click.command(name="use")
 @click.argument('version', required=True)
