@@ -38,7 +38,7 @@ tvm install v<tutor-version>
 2. Create a new project with tutor environment manager
 
 ```bash
-tvm project <project-name> v<tutor-version>
+tvm project init <project-name> v<tutor-version>
 ```
 
 3. Open the project folder
