@@ -361,11 +361,18 @@ def projects() -> None:
 @click.argument('version', required=False)
 def init(name: str = None, version: str = None):
     """Configure a new tvm project in the current path."""
-    if not version:
-        version = get_active_version()
+    current_version = version_manager.current_version(f"{TVM_PATH}")
 
-    if not version_is_installed(version):
-        raise click.UsageError(f'Could not find target: {version}')
+    if not version:
+        version = current_version
+
+    if not current_version and not version:
+        lister = TutorVersionLister(repository=version_manager)
+        version = lister(limit=1)[0]
+
+    if not current_version:
+        subprocess.run(f"tvm install {version}", shell=True, check=True)
+        subprocess.run(f"tvm use {version}", shell=True, check=True)
 
     if name:
         tvm_project_folder = pathlib.Path().resolve() / name
