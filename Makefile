@@ -32,6 +32,7 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	pip install -r requirements/pip-tools.txt
 	$(PIP_COMPILE) -o requirements/base.txt requirements/base.in
 	$(PIP_COMPILE) -o requirements/dev.txt requirements/dev.in
+	$(PIP_COMPILE) -o requirements/doc.txt requirements/doc.in
 
 quality: ## check coding style with pycodestyle and pylint
 	pylint tvm *.py

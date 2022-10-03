@@ -1,0 +1,400 @@
+@font-face {
+font-family: "PoppinsRegular";
+src: url("https://energiasrenovables.edunext.io/asset-v1:energiasrenovables+er01+2022_T1+type@asset+block@Poppins-Regular.ttf") format('truetype');
+}
+
+
+body {
+  padding-top: 0!important;
+  font-family: "PoppinsRegular", serif;
+  width: 112% !important;
+}
+
+#site-navigation div.bd-sidebar__top {
+  padding-left: inherit;
+}
+
+nav#bd-docs-nav {
+    padding-left: 10px;
+}
+
+.card.w-100.shadow.img-panel1.img-panels.card-hidde.docutils {
+    display: none;
+}
+
+div.card {
+  /* width: 25.188rem !important;
+  box-shadow: none !important; */
+
+  position: relative;
+  overflow: hidden;
+  display: flex;
+
+  width: 300px;
+  height: 371px;
+  align-content: stretch;
+  justify-content: center;
+  align-items: stretch;
+
+}
+
+nav.bd-links p.caption {
+  text-transform: uppercase;
+  font-weight: 700;
+  position: relative;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+div.img-panels {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+div.img-backoffice {
+  background-image: url("../../_static/_assets/internal_img/Backoffice_process.png");
+}
+
+
+div.img-legal {
+  background-image: url("../../_static/_assets/internal_img/panel_legal.png");
+}
+
+
+div.img-bussines {
+  background-image: url("../../_static/_assets/internal_img/Business_process.png");
+}
+
+div.img-atlas {
+  background-image: url("../../_static/_assets/internal_img/Atlas_team.png");
+
+}
+
+div.img-dedalo {
+  background-image: url("../../_static/_assets/internal_img/Dedalo_process.png");
+}
+
+div.img-distro {
+  background-image: url("../../_static/_assets/internal_img/distro_process.png");
+}
+
+div.img-ECC {
+  background-image: url("../../_static/_assets/internal_img/ECC_product.png");
+}
+
+div.img-eox_core {
+  background-image: url("../../_static/_assets/internal_img/eox-core.png");
+}
+
+div.img-eox_core_product  {
+  background-image: url("../../_static/_assets/internal_img/eox-core_product.png");
+}
+
+div.img-eox_support_product  {
+  background-image: url("../../_static/_assets/internal_img/eox-support_product.png");
+}
+
+div.img-eox_support_product_features  {
+  background-image: url("../../_static/_assets/internal_img/eox-support_product_features.png");
+}
+
+div.img-eox_tenatn_product  {
+  background-image: url("../../_static/_assets/internal_img/eox-tenatn_product.png");
+}
+
+div.img-eox_theming_product  {
+  background-image: url("../../_static/_assets/internal_img/exo-theming_product.png");
+}
+
+div.img-general_documentation_process  {
+  background-image: url("../../_static/_assets/internal_img/general_documentation_process.png");
+}
+
+div.img-general_documentation_process_knowledge  {
+  background-image: url("../../_static/_assets/internal_img/general_documentation_process_knowledge.png");
+}
+
+div.img-infosecurity_process  {
+  background-image: url("../../_static/_assets/internal_img/Infosecurity_process.png");
+}
+
+div.img-data_privacy  {
+  background-image: url("../../_static/_assets/internal_img/Data_privacy_process.png");
+}
+
+div.img-MandS_team  {
+  background-image: url("../../_static/_assets/internal_img/MandS_team.png");
+}
+
+div.img-Marketing_process {
+  background-image: url("../../_static/_assets/internal_img/Marketing_process.png");
+}
+
+div.img-pearson {
+  background-image: url("../../_static/_assets/internal_img/Pearson_team.png");
+}
+
+div.img-proversity {
+  background-image: url("../../_static/_assets/internal_img/Proversity_team.png");
+}
+
+div.img-saas {
+  background-image: url("../../_static/_assets/internal_img/SaaS_team.png");
+}
+
+
+div.img-sales_process {
+  background-image: url("../../_static/_assets/internal_img/Sales_process.png");
+}
+
+div.img-sd_process {
+  background-image: url("../../_static/_assets/internal_img/SD_Process.png");
+}
+
+div.img-shipyard_process {
+  background-image: url("../../_static/_assets/internal_img/shipyard_process.png");
+}
+
+div.img-talent_HR {
+  background-image: url("../../_static/_assets/internal_img/TalentHR_team.png");
+}
+
+div.img-tecnology_process {
+  background-image: url("../../_static/_assets/internal_img/Technology_process.png");
+}
+
+
+/*img.card-img-top {*/
+/*  position: absolute;*/
+/*  top: 0;*/
+/*  max-width: 100%;*/
+/*  height: auto;*/
+/*  !* display:none; *!*/
+/*}*/
+
+/*div.card:hover img.card-img-top {*/
+/*  display: block;*/
+/*  background-repeat: no-repeat;*/
+/*  background-position: center center;*/
+/*  background-size: cover;*/
+/*  !* opacity: 0.3; *!*/
+/*}*/
+
+/* div.card-body {
+  z-index: 9999;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: 18px;
+}*/
+
+/*div.card-body {
+    z-index: 9999;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    font-size: 18px;
+    justify-content: flex-end;
+}*/
+
+
+
+div.card-body {
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/*div.toctree-wrapper.compound {
+    padding-bottom: 108px;
+}*/
+.toctree-wrapper.compound {
+    padding-top: inherit;
+}
+
+div.toctree-wrapper p.caption {
+  font-weight: 900;
+  font-size: 1.2em;
+  /*display: none;*/
+  visibility: hidden;
+}
+
+div.toctree-wrapper li {
+  font-weight: 400;
+  text-decoration: none;
+}
+
+div.toctree-wrapper li a {
+  font-weight: 400;
+  color: rgb(0, 0, 0) !important;
+  text-decoration: none;
+  font-size: 17px;
+  line-height: 28px;
+  --head-indent: 1.7;
+}
+div.toctree-wrapper>ul {
+    padding-left: 1.5em;
+    /*height: 170px;*/
+}
+
+/* This fixes the text alignment style, only for the Arabic language*/
+html[lang="ar"] body,
+html[lang="ar"] #site-navigation div.navbar_extra_footer {
+  text-align: inherit;
+}
+
+
+/* Button styles */
+
+.button-modify {
+  border: 2px solid black;
+  /* background-color: #05093b !important; */
+  /* padding: 14px 28px; */
+  /* font-size: 16px; */
+  /* cursor: pointer; */
+  color: #05093b !important;
+}
+
+/* Gray */
+.default {
+  border-color: black;
+  color: black;
+}
+
+.default:hover {
+  background: gray !important;
+}
+
+
+/* Lateral nav styles  */
+
+/*nav.bd-links {*/
+/*  background: #efefef;*/
+/*}*/
+
+a.reference[href="#"]{
+  font-weight: 700;
+}
+a.reference[href="../index.html"]{
+  font-weight: 700;
+}
+a.reference[href="../../index.html"]{
+  font-weight: 700;
+}
+
+.sidebar p {
+  text-align: center;
+}
+
+p.sidebar-title {
+  font-size: 1em !important;
+}
+
+.sidebar a img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+
+div.sidebar:not(.margin) {
+    width: 35%;
+    margin-left: 1.5em;
+    margin-right: -38%;
+    border-top-color: rgb(164, 166, 167);
+}
+
+
+
+.section .arabic li {
+
+  margin-bottom: 1.2em;
+}
+
+
+.section .arabic li p {
+
+  margin-top: 1.2em;
+}
+
+
+a.external:after{
+
+    font-family: 'FontAwesome';
+    content: " \f08e";
+}
+
+
+li ol.arabic {
+  list-style-type: lower-alpha;
+}
+
+
+.sidebar a:after{
+    font-family: 'FontAwesome';
+    content: " \f002";
+    text-align: right;
+}
+
+
+#site-navigation div.navbar_extra_footer {
+    text-align: left;
+}
+
+div.contents p.topic-title {
+
+    margin-bottom: 20px;
+}
+
+
+div.contents ul li p a {
+  font-size: 1em;
+}
+
+div.contents ul li p a:after {
+  font-weight: 200;
+  font-size: 0.8em;
+  font-family: 'FontAwesome';
+  content: " \f061";
+
+}
+
+div.contents ul li {
+  margin-bottom: 0.6em;
+}
+
+
+
+.contents {
+  width: 100%;
+}
+
+.no-bullets ul {
+  list-style-type: none;
+}
+
+
+#site-navigation .bd-sidebar__bottom {
+    margin-bottom: 1em;
+}
+
+
+p.feedback a.reference .std-ref{
+  border: 1px solid #7fbbe3;
+    background: #e7f2fa;
+    font-size: 80%;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 2.4px 6px;
+    margin: auto 2px;
+}
+
+details summary {
+  font-weight: 700;
+  margin-bottom: 0.6em;
+}
