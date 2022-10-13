@@ -75,4 +75,4 @@ Step by Step
 Next Steps
 -----------
 
-- To do more with TVM, check `TVM Topic Guides </>`_.
+- To do more with TVM, check :doc:`TVM Topic Guides </tvm_topic_guides/index>`.

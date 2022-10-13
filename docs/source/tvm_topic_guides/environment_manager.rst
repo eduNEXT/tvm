@@ -109,4 +109,4 @@ Pip
 Related
 --------
 
-- `TVM as Tutor Manager </>`_.
+- :doc:`TVM as Tutor Manager </tvm_topic_guides/version_manager>`.
