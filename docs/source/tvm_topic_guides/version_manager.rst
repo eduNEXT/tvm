@@ -139,4 +139,4 @@ Pip
 Related
 --------
 
-- `TVM as Environment Manager </>`_.
+- :doc:`TVM as Environment Manager </tvm_topic_guides/environment_manager>`.
