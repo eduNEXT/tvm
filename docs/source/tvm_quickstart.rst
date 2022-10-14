@@ -83,5 +83,5 @@ Step by Step
 Next Steps
 -----------
 
-- To do more with TVM, check `Tutorials </>`_ or `TVM Topic Guides </>`_.
+- To do more with TVM, check :doc:`Tutorials </tvm_tutorials/index>` or :doc:`TVM Topic Guides </tvm_topic_guides/index>`.
 - To know more about Tutor, check `Tutor documentation <https://docs.tutor.overhang.io/>`_.

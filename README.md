@@ -1,9 +1,11 @@
-# What's TVM
+# TVM
 
-TVM is the acronym for:
+TVM is a tool that allows you to manage several Tutor development environments so that they work in isolation, and you can work on different projects with independent Tutor versions and configurations.
 
-- **Tutor Version Manager:** manages the version of the tutor.
-- **Tutor enVironment Manager:** for creating project-based environments with tutor.
+TVM is also the acronym for:
+
+- Tutor Version Manager: manages the version of Tutor.
+- Tutor enVironment Manager: for creating project-based environments with Tutor.
 
 # Installing TVM
 
@@ -13,61 +15,67 @@ Open a terminal and run:
 pip install git+https://github.com/eduNEXT/tvm.git
 ```
 
-You can verify the installation with:
+Verify the installation:
 
 ```bash
 tvm --version
 ```
 
-## Upgrading TVM (ToDo)
+# Getting Started
 
-Currently, there isn't a command to do it, if you want to upgrade it, please install it again.
+Create and activate a new project with the following steps:
 
-# Usage
-
-## Quickstart with TVM as enVironment Manager
-
-Create and activate a new project with:
-
-1. Install a tutor version with tutor version manager
+1. Install the version of Tutor you want to use with TVM.
 
 ```bash
-tvm install v<tutor-version>
+tvm install <tutor-version>
+
+# For example:
+# tvm install v14.0.0
 ```
 
-2. Create a new project with tutor environment manager
+2. Create a new project with TVM.
 
 ```bash
-tvm project init <project-name> v<tutor-version>
+tvm project init <project-name> <tutor-version>
+
+# For example:
+# tvm project init tvm-test v14.0.0
 ```
 
-3. Open the project folder
+3. Open the project folder.
 
 ```bash
 cd <project-name>
 ```
 
-4. Activate the project environment
+4. Activate the project environment.
 
 ```bash
 source .tvm/bin/activate
 ```
 
-Now you can start configuring and using your tutor instance, reference [tutor official documentation](https://docs.tutor.overhang.io/index.html).
+5. Run your project.
 
-## User Guide
+```bash
+tutor local quickstart
+```
 
-If you want to see what else you can do, access the complete guide of:
+You can start configuring and using your Tutor instance.
 
-- [**Tutor Version Manager**](/docs/TutorVersionManager.rst)
+## Next steps
 
-- [**Tutor enVironment Manager**](/docs/TutorEnvironmentManager.rst)
+If you want to see what else you can do, access **the complete TVM documentation**: https://tvm.docs.edunext.co
+
+# Getting Help
+
+- To report a bug or ask for a feature, go to the TVM GitHub issues: https://github.com/eduNEXT/tvm/issues
+
+- To get support, go to the TVM Github discussion forum: https://github.com/eduNEXT/tvm/discussions
 
 # How to Contribute
 
-Contributions are welcome!. See our [CONTRIBUTING](https://github.com/edunext/tvm/blob/master/CONTRIBUTING.md)
-file for more information – it also contains guidelines for how to maintain high code quality, which will make your
-contribution more likely to be accepted.
+Contributions are welcome! See our [CONTRIBUTING](https://github.com/edunext/tvm/blob/master/CONTRIBUTING.md) file for more information – it also contains guidelines for how to maintain high code quality, which will make your contribution more likely to be accepted.
 
 # License
 
