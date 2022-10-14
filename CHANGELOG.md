@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.0 - 2022-10-14
+
+### [2.2.0](https://github.com/eduNEXT/tvm/compare/v2.1.0...v2.2.0) (2022-10-14)
+
+#### Features
+
+- add tvm documentation ([1fe29ee](https://github.com/eduNEXT/tvm/commit/1fe29eee37a241219b60c904f868154d6b7b3ee4))
+
+#### Documentation
+
+- add the base doc configuration ([6196a33](https://github.com/eduNEXT/tvm/commit/6196a3311e4300d52fed18d5c9533c133c8b43b3))
+- update README with the new template and add links to docs ([#57](https://github.com/eduNEXT/tvm/issues/57)) ([573a638](https://github.com/eduNEXT/tvm/commit/573a6387d85f34a13b33f50ac645ec0a7b43349d))
+
 ## v2.1.0 - 2022-09-22
 
 ### [2.1.0](https://github.com/eduNEXT/tvm/compare/v2.0.1...v2.1.0) (2022-09-22)
