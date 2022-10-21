@@ -32,7 +32,6 @@ Include anything else that will help reviewers and consumers understand the chan
 
 ## Checklist for Merge
 
-- [ ] Tested in a remote environment
 - [ ] Updated documentation
 - [ ] Rebased master/main
 - [ ] Squashed commits

@@ -29,55 +29,44 @@ For more information, see the `Tutor requirements <https://docs.tutor.overhang.i
 Step by Step
 -------------
 
-1. Install the latest stable release of TVM.
+#.  Install the latest stable release of TVM.
 
+    .. code-block:: bash
 
-.. code-block:: bash
+        pip install git+https://github.com/eduNEXT/tvm.git
 
-    pip install git+https://github.com/eduNEXT/tvm.git
+#.  Verify the installation.
 
+    .. code-block:: bash
 
-2. Verify the installation.
+        tvm --version
 
-.. code-block:: bash
+#.  Create a new project with TVM.
 
-    tvm --version
+    .. code-block:: bash
 
-3. Install the version of Tutor you want to use.
+        tvm project init <project-name> <tutor-version>
 
-.. code-block:: bash
+        # For example:
+        # tvm project init tvm-test v14.0.0
 
-    tvm install <tutor-version>
+#.  Open the project folder.
 
-    # For example:
-    # tvm install v14.0.0
+    .. code-block:: bash
 
-4. Create a new project with TVM.
+        cd <project-name>
 
-.. code-block:: bash
+#.  Activate the project environment.
 
-    tvm project init <project-name> <tutor-version>
+    .. code-block:: bash
 
-    # For example:
-    # tvm project init tvm-test v14.0.0
+        source .tvm/bin/activate
 
-5. Open the project folder.
+#.  Run your project.
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    cd <project-name>
-
-6. Activate the project environment.
-
-.. code-block:: bash
-
-    source .tvm/bin/activate
-
-7. Run your project.
-
-.. code-block:: bash
-
-    tutor local quickstart
+        tutor local quickstart
 
 
 Next Steps
