@@ -372,6 +372,7 @@ def projects() -> None:
 def init(name: str = None, version: str = None):
     """Configure a new tvm project in the current path."""
     current_version = version_manager.current_version(f"{TVM_PATH}")
+    local_versions = get_local_versions()
 
     if not version:
         version = current_version
@@ -381,6 +382,10 @@ def init(name: str = None, version: str = None):
         version = lister(limit=1)[0]
 
     if not current_version:
+        install_tutor_version(version=version)
+        use_version(version=version)
+
+    if version not in local_versions:
         install_tutor_version(version=version)
         use_version(version=version)
 
