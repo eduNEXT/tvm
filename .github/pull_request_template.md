@@ -5,7 +5,7 @@ https://www.conventionalcommits.org/en/v1.0.0/
 
 Use this template as a guide. Omit sections that don't apply.
 
-🙈 Don't be lazy, try to fill out the template well.
+🙈 Don't be lazy; try to fill out the template well.
 -->
 
 ## Description
@@ -16,8 +16,8 @@ Useful information to include:
 - Which user roles will this change impact? Common user roles are "Learner", "Course Author",
 "Developer", and "Operator".
 - Include screenshots for changes to the UI (ideally, both "before" and "after" screenshots, if applicable).
-- Provide links to the description of corresponding configuration changes. Remember to correctly annotate these
-changes.
+- Provide links to the description of corresponding configuration changes. Remember to annotate these
+changes correctly.
 
 ## Testing instructions
 
@@ -27,7 +27,7 @@ Please provide detailed step-by-step instructions for testing this change.
 
 Include anything else that will help reviewers and consumers understand the change.
 - Does this change depend on other changes elsewhere?
-- Any special concerns or limitations? For example: deprecations, migrations, security, or accessibility.
+- Any particular concerns or limitations? For example: deprecations, migrations, security, or accessibility.
 - Link to other information about the change, such as Jira issues, GitHub issues, or Discourse discussions.
 
 ## Checklist for Merge
@@ -37,7 +37,7 @@ Include anything else that will help reviewers and consumers understand the chan
 - [ ] Squashed commits
 
 <!--
-You can put NA in the checklist if it doesn't apply
+You can put NA in the checklist if it doesn't apply.
 
-- [x] Check that dont't apply / NA
+- [x] Check that don't apply / NA
 -->
