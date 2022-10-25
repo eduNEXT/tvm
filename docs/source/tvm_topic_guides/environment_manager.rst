@@ -23,10 +23,7 @@ Create a Project
     # tvm project init tvm-test v14.0.0
 
 
-.. note:: The `<tutor-version>` parameter is optional. If you don't specify the version, the project will create the project with the version you set previously with `tvm use <tutor-version>` or the latest version.
-
-
-.. warning:: If you are going to specify the `<tutor-version>` , you must have that version in your TVM. If you don't have it, install it with `tvm install <tutor-version>`.
+.. note:: The <tutor-version> parameter is optional. However, if you don't specify the version, the project will be created with the version you set previously with tvm use <tutor-version> or the latest version. If you specify the version, and the version isn't installed, it will be installed.
 
 
 Activate a Project Environment
