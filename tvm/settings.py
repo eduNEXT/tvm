@@ -9,4 +9,4 @@ version_manager = VersionManagerGitRepository(logger=logger)
 
 def environment_manager(project_path: str) -> EnvironmentManagerGitRepository:
     """Environment manager repository."""
-    return EnvironmentManagerGitRepository(project_path=project_path)
+    return EnvironmentManagerGitRepository(project_path=project_path, logger=logger)

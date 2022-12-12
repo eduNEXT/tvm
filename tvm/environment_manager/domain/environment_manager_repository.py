@@ -13,6 +13,10 @@ class EnvironmentManagerRepository(ABC):
         """Tutor Project Init to environment manager."""
 
     @abstractmethod
+    def project_remover(self) -> None:
+        """Tutor Project Remove to environment manager."""
+
+    @abstractmethod
     def current_version(self) -> None:
         """Get the project's version."""
 

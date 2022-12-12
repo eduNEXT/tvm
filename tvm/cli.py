@@ -16,6 +16,7 @@ from tvm import __version__
 from tvm.environment_manager.application.plugin_installer import PluginInstaller
 from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
 from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
+from tvm.environment_manager.application.tutor_project_remover import TutorProjectRemover
 from tvm.settings import environment_manager, version_manager
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
@@ -408,6 +409,28 @@ def init(name: str = None, version: str = None):
         raise click.UsageError('There is already a project initiated.') from IndexError
 
 
+@click.command(name="remove")
+@click.argument('name', required=True)
+@click.argument('version', required=True)
+def remove(name: str, version: str):
+    """Remove TVM project."""
+    project_name = f"{version}@{name}"
+
+    tvm_project_folder = TVM_PATH / project_name
+
+    if not os.path.exists(tvm_project_folder):
+        raise click.UsageError('There is no project initiated with this name and version.') from IndexError
+
+    if not os.path.exists(tvm_project_folder / 'config.yml'):
+        raise click.UsageError('This project was created in older version or have corrupted files.') from IndexError
+
+    click.confirm(text=f"Are you sure you want to remove the project {project_name}?", abort=True)
+
+    repository = environment_manager(project_path=f"{project_name}")
+    remover = TutorProjectRemover(repository=repository)
+    remover()
+
+
 @click.command(name="install", context_settings={"ignore_unknown_options": True})
 @click.argument('options', nargs=-1, type=click.UNPROCESSED)
 def install_plugin(options):
@@ -499,6 +522,7 @@ cli.add_command(uninstall)
 cli.add_command(use)
 cli.add_command(projects)
 projects.add_command(init)
+projects.add_command(remove)
 cli.add_command(plugins)
 plugins.add_command(install_plugin)
 plugins.add_command(uninstall_plugin)

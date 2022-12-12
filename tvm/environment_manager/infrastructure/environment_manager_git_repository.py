@@ -7,8 +7,11 @@ import subprocess
 from distutils.dir_util import copy_tree  # pylint: disable=W0402
 from typing import List
 
+import yaml
+
 from tvm.environment_manager.domain.environment_manager_repository import EnvironmentManagerRepository
 from tvm.environment_manager.domain.project_name import ProjectName
+from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.templates.tvm_activate import TVM_ACTIVATE_SCRIPT
 
 TVM_PATH = pathlib.Path.home() / ".tvm"
@@ -17,8 +20,9 @@ TVM_PATH = pathlib.Path.home() / ".tvm"
 class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
     """Principals commands to manage TVM."""
 
-    def __init__(self, project_path: str) -> None:
+    def __init__(self, project_path: str, logger: ClientLoggerRepository) -> None:
         """Initialize usefull variables."""
+        self.logger = logger
         self.PROJECT_PATH = project_path
         self.TVM_ENVIRONMENT = f"{project_path}/.tvm"
 
@@ -33,6 +37,37 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         self.create_config_json(data)
         self.create_active_script(data)
         self.create_project(project_name)
+
+    def project_remover(self) -> None:
+        """Remove tutor project."""
+        with open(f"{TVM_PATH}/{self.PROJECT_PATH}/config.yml", "r", encoding='utf-8') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+
+            for project in data['project_directories']:
+                self.remove_project(project)
+            self.remove_project(f"{TVM_PATH}/{self.PROJECT_PATH}")
+
+            self.logger.echo(f"Project {self.PROJECT_PATH} removed.")
+
+    def remove_project(self, project_path: str):
+        """Remove project."""
+        try:
+            shutil.rmtree(f"{project_path}")
+        except PermissionError:
+            self.logger.echo(
+                "Don't Worry, TVM just needs sudo permissions to delete your project files."
+                "You can find more information about it in our docs."
+            )
+            subprocess.call(
+                [
+                    "sudo",
+                    "rm",
+                    "-r",
+                    f"{project_path}",
+                ]
+            )
+        except FileExistsError:
+            pass
 
     def current_version(self) -> ProjectName:
         """Project name in current version."""
@@ -64,9 +99,19 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
 
             tvm_project = f"{TVM_PATH}/{project_name}"
             copy_tree(tutor_version_folder, tvm_project)
+            with open(f"{tvm_project}/config.yml", "w", encoding='utf-8') as f:
+                data = {'project_directories': [f"{self.PROJECT_PATH}"]}
+                yaml.dump(data, f, default_flow_style=False)
 
             shutil.rmtree(f"{tvm_project}/venv")
             self.setup_version_virtualenv(project_name)
+        else:
+            with open(f"{TVM_PATH}/{project_name}/config.yml", "r+", encoding='utf-8') as f:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+                data['project_directories'].append(f"{self.PROJECT_PATH}")
+                f.truncate(0)
+                f.seek(0)
+                yaml.dump(data, f, default_flow_style=False)
 
     @staticmethod
     def setup_version_virtualenv(version=None) -> None:

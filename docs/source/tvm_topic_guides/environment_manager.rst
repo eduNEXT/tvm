@@ -5,6 +5,7 @@ Index
 ------
 
 - `Create a Project`_
+- `Remove a Project`_
 - `Activate a Project Environment`_
 - `Deactivate a Project Environment`_
 - `List Environments and Projects`_
@@ -24,6 +25,17 @@ Create a Project
 
 
 .. note:: The <tutor-version> parameter is optional. However, if you don't specify the version, the project will be created with the version you set previously with tvm use <tutor-version> or the latest version. If you specify the version, and the version isn't installed, it will be installed.
+
+
+Remove a Project
+-----------------
+
+.. code-block:: bash
+
+    tvm project remove <project-name> <tutor-version>
+
+    # For example:
+    # tvm project remove tvm-test v14.0.0
 
 
 Activate a Project Environment
