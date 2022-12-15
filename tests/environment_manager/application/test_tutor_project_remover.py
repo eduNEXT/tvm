@@ -14,7 +14,7 @@ def test_should_remove_tutor_project():
 
     # When
     remove = TutorProjectRemover(repository=repository)
-    remove()
+    remove(prune=False)
 
     # Then
     assert repository.PROJECT_NAME == []

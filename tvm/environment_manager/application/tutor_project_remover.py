@@ -9,6 +9,6 @@ class TutorProjectRemover:
         """init."""
         self.repository = repository
 
-    def __call__(self) -> None:
+    def __call__(self, prune: bool) -> None:
         """call."""
-        self.repository.project_remover()
+        self.repository.project_remover(prune=prune)

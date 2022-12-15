@@ -38,16 +38,23 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         self.create_active_script(data)
         self.create_project(project_name)
 
-    def project_remover(self) -> None:
+    def project_remover(self, prune: bool) -> None:
         """Remove tutor project."""
         with open(f"{TVM_PATH}/{self.PROJECT_PATH}/config.yml", "r", encoding='utf-8') as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
 
+            deleted_dirs = []
             for project in data['project_directories']:
-                self.remove_project(project)
-            self.remove_project(f"{TVM_PATH}/{self.PROJECT_PATH}")
+                if os.path.exists(f"{project}"):
+                    if not prune:
+                        project = f"{project}/.tvm"
+                    deleted_dirs.append(project)
+                    self.remove_project(project)
+                else:
+                    self.logger.echo(f"Project not found in {project}, if you moved it from the original path, you must remove it manually.\n")  # pylint: disable=C0301
 
-            self.logger.echo(f"Project {self.PROJECT_PATH} removed.")
+            self.remove_project(f"{TVM_PATH}/{self.PROJECT_PATH}")
+            self.logger.echo(f"Project {self.PROJECT_PATH} removed from the following paths: {', '.join(deleted_dirs)}")  # pylint: disable=C0301
 
     def remove_project(self, project_path: str):
         """Remove project."""
@@ -56,7 +63,6 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
         except PermissionError:
             self.logger.echo(
                 "Don't Worry, TVM just needs sudo permissions to delete your project files."
-                "You can find more information about it in our docs."
             )
             subprocess.call(
                 [
@@ -66,8 +72,6 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
                     f"{project_path}",
                 ]
             )
-        except FileExistsError:
-            pass
 
     def current_version(self) -> ProjectName:
         """Project name in current version."""

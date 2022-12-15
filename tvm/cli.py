@@ -412,7 +412,8 @@ def init(name: str = None, version: str = None):
 @click.command(name="remove")
 @click.argument('name', required=True)
 @click.argument('version', required=True)
-def remove(name: str, version: str):
+@click.option('--prune', is_flag=True, help="Remove all files in project folder.")
+def remove(name: str, version: str, prune: bool):
     """Remove TVM project."""
     project_name = f"{version}@{name}"
 
@@ -424,11 +425,17 @@ def remove(name: str, version: str):
     if not os.path.exists(tvm_project_folder / 'config.yml'):
         raise click.UsageError('This project was created in older version or have corrupted files.') from IndexError
 
-    click.confirm(text=f"Are you sure you want to remove the project {project_name}?", abort=True)
+    if prune:
+        click.echo(click.style(f"Removing project {project_name} and all its files in project folder.", fg='red'))
+    else:
+        click.echo(click.style(f"Removing TVM files for project {project_name}.", fg='yellow'))
+        click.echo(click.style("Use --prune to remove all files in project folder.", fg='yellow'))
+
+    click.confirm(text=f"\nAre you sure you want to remove the project {project_name}?", abort=True)
 
     repository = environment_manager(project_path=f"{project_name}")
     remover = TutorProjectRemover(repository=repository)
-    remover()
+    remover(prune=prune)
 
 
 @click.command(name="install", context_settings={"ignore_unknown_options": True})

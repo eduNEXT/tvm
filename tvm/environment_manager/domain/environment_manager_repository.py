@@ -13,7 +13,7 @@ class EnvironmentManagerRepository(ABC):
         """Tutor Project Init to environment manager."""
 
     @abstractmethod
-    def project_remover(self) -> None:
+    def project_remover(self, prune: bool) -> None:
         """Tutor Project Remove to environment manager."""
 
     @abstractmethod

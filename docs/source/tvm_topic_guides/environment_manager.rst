@@ -38,6 +38,9 @@ Remove a Project
     # tvm project remove tvm-test v14.0.0
 
 
+.. note:: You can use the flag --prune to remove the project folder. Ex: `tvm project remove tvm-test v14.0.0 --prune`
+
+
 Activate a Project Environment
 ------------------------------
 
