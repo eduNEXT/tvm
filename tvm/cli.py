@@ -10,6 +10,7 @@ from distutils.version import LooseVersion  # pylint: disable=W0402
 from typing import Optional
 
 import click
+import yaml
 from click.shell_completion import CompletionItem
 
 from tvm import __version__
@@ -17,6 +18,7 @@ from tvm.environment_manager.application.plugin_installer import PluginInstaller
 from tvm.environment_manager.application.plugin_uninstaller import PluginUninstaller
 from tvm.environment_manager.application.tutor_project_creator import TutorProjectCreator
 from tvm.environment_manager.application.tutor_project_remover import TutorProjectRemover
+from tvm.environment_manager.domain.project_name import ProjectName
 from tvm.settings import environment_manager, version_manager
 from tvm.templates.tutor_switcher import TUTOR_SWITCHER_TEMPLATE
 from tvm.version_manager.application.tutor_plugin_installer import TutorPluginInstaller
@@ -410,13 +412,13 @@ def init(name: str = None, version: str = None):
 
 
 @click.command(name="remove")
-@click.argument('name', required=True)
-@click.argument('version', required=True)
+@click.argument('project-name', required=True)
 @click.option('--prune', is_flag=True, help="Remove all files in project folder.")
-def remove(name: str, version: str, prune: bool):
-    """Remove TVM project."""
-    project_name = f"{version}@{name}"
+def remove(project_name: ProjectName, prune: bool):
+    """Remove TVM project.
 
+    PROJECT-NAME: {VERSION}@{NAME} E.g. v1.0.0@my-project
+    """
     tvm_project_folder = TVM_PATH / project_name
 
     if not os.path.exists(tvm_project_folder):
@@ -425,11 +427,14 @@ def remove(name: str, version: str, prune: bool):
     if not os.path.exists(tvm_project_folder / 'config.yml'):
         raise click.UsageError('This project was created in older version or have corrupted files.') from IndexError
 
-    if prune:
-        click.echo(click.style(f"Removing project {project_name} and all its files in project folder.", fg='red'))
-    else:
-        click.echo(click.style(f"Removing TVM files for project {project_name}.", fg='yellow'))
-        click.echo(click.style("Use --prune to remove all files in project folder.", fg='yellow'))
+    with open(tvm_project_folder / 'config.yml', "r", encoding='utf-8') as f:
+        data = yaml.load(f, Loader=yaml.FullLoader)
+        click.echo(click.style("You are trying to remove the following paths and all its containing files:\n", fg='yellow'))  # pylint: disable=line-too-long
+
+        for path in data['project_directories']:
+            if not prune:
+                path = f"{path}/.tvm"
+            click.echo(click.style(f"\t{path}", fg='yellow'))
 
     click.confirm(text=f"\nAre you sure you want to remove the project {project_name}?", abort=True)
 

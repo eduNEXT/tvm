@@ -54,7 +54,9 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
                     self.logger.echo(f"Project not found in {project}, if you moved it from the original path, you must remove it manually.\n")  # pylint: disable=C0301
 
             self.remove_project(f"{TVM_PATH}/{self.PROJECT_PATH}")
-            self.logger.echo(f"Project {self.PROJECT_PATH} removed from the following paths: {', '.join(deleted_dirs)}")  # pylint: disable=C0301
+            self.logger.echo(f"\nProject {self.PROJECT_PATH} removed from the following paths:")  # pylint: disable=C0301
+            for project in deleted_dirs:
+                self.logger.echo(f"\t{project}")
 
     def remove_project(self, project_path: str):
         """Remove project."""
