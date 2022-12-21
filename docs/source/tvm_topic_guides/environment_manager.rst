@@ -5,7 +5,7 @@ Index
 ------
 
 - `Create a Project`_
-- `Remove a Project`_
+- `Remove a Project Environment`_
 - `Activate a Project Environment`_
 - `Deactivate a Project Environment`_
 - `List Environments and Projects`_
@@ -27,18 +27,18 @@ Create a Project
 .. note:: The <tutor-version> parameter is optional. However, if you don't specify the version, the project will be created with the version you set previously with tvm use <tutor-version> or the latest version. If you specify the version, and the version isn't installed, it will be installed.
 
 
-Remove a Project
------------------
+Remove a Project Environment
+----------------------------
 
 .. code-block:: bash
 
-    tvm project remove <project-name> <tutor-version>
+    tvm project remove <tutor-version>@<project-name>
 
     # For example:
-    # tvm project remove tvm-test v14.0.0
+    # tvm project remove v14.0.0@tvm-test
 
 
-.. note:: You can use the flag --prune to remove all the project folder. Ex: `tvm project remove tvm-test v14.0.0 --prune`
+.. note:: You can use the flag --prune to remove all the project folder. Ex: `tvm project remove v14.0.0@tvm-test --prune`
 
 
 Activate a Project Environment
