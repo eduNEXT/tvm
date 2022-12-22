@@ -15,6 +15,13 @@ class EnvironmentManagerInMemoryRepository(EnvironmentManagerRepository):
         else:
             raise Exception('There is already a project initiated.')
 
+    def project_remover(self, prune: bool) -> None:
+        """Tutor Project Remove to environment manager."""
+        if self.PROJECT_NAME:
+            self.PROJECT_NAME.clear()
+        else:
+            raise Exception('There is no project to remove.')
+
 
     def install_plugin(self, options: List) -> None:
         if options:
