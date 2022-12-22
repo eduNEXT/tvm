@@ -12,5 +12,5 @@ jobs:
               uses: pozil/auto-assign-issue@v1.5.0
               with:
                 repo-token: ${{ secrets.MEMBER_ALLOCATOR_TOKEN }}
-                teams: tvm-maintainers
+                teams: developers-tools
                 numOfAssignee: 2
