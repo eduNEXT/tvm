@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.0 - 2022-12-22
+
+### [2.2.0](https://github.com/eduNEXT/tvm/compare/v2.1.1...v2.2.0) (2022-12-22)
+
+#### Features
+
+- **DS-322:** add command for remove TVM project ([#60](https://github.com/eduNEXT/tvm/issues/60)) ([12439ff](https://github.com/eduNEXT/tvm/commit/12439ff774c299cbb8793f8e64a5da80b3020dd3))
+
+#### Continuous Integration
+
+- update the changelog updater step in bumpversion ([#61](https://github.com/eduNEXT/tvm/issues/61)) ([c6fb805](https://github.com/eduNEXT/tvm/commit/c6fb805578adc1e322307ac937f4c3850eb1a435))
+
+#### Documentation
+
+- update tvm doc release version to 2.1.1 and fix typo and grammar ([#59](https://github.com/eduNEXT/tvm/issues/59)) ([025f000](https://github.com/eduNEXT/tvm/commit/025f00026a955d6e93dcb3a360b7efe547f0a662))
+
 ## v2.1.1 - 2022-10-25
 
 ### [2.1.1](https://github.com/eduNEXT/tvm/compare/v2.1.0...v2.1.1) (2022-10-25)
