@@ -1,16 +1,18 @@
-name: Issue assignment
+name: PR-Issue assignment
 
 on:
     issues:
+        types: [opened]
+    pull_request:
         types: [opened]
 
 jobs:
     auto-assign:
         runs-on: ubuntu-latest
         steps:
-            - name: 'Auto-assign issue'
+            - name: 'Auto-assign PR-Issue'
               uses: pozil/auto-assign-issue@v1.5.0
               with:
-                repo-token: ${{ secrets.MEMBER_ALLOCATOR_TOKEN }}
+                repo-token: ${{ secrets.DEDALO_PAT }}
                 teams: developers-tools
                 numOfAssignee: 2
