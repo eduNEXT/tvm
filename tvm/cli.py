@@ -142,6 +142,7 @@ def list_versions(limit: int):
     version_names = lister(limit=limit)
     local_versions = version_manager.local_versions(f"{TVM_PATH}")
     version_names = list(set(version_names + local_versions))
+    version_names = [str(version_name) for version_name in version_names]
     version_names = sorted(version_names, reverse=False, key=LooseVersion)
     global_active = version_manager.current_version(f"{TVM_PATH}")
     project_version = None
