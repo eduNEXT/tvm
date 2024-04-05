@@ -15,7 +15,7 @@ release = 'v2.1.1'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinxcontrib.yt",
+    "sphinxcontrib.youtube",
     "sphinxcontrib.images",
     "sphinx_panels",
     "sphinxcontrib.contentui",
