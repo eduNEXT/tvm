@@ -9,13 +9,12 @@
 project = 'TVM'
 copyright = '2022, eduNEXT'
 author = 'eduNEXT'
-release = 'v2.1.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinxcontrib.yt",
+    "sphinxcontrib.youtube",
     "sphinxcontrib.images",
     "sphinx_panels",
     "sphinxcontrib.contentui",
