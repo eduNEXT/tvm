@@ -4,10 +4,14 @@
 #
 #    make upgrade
 #
+accessible-pygments==0.0.4
+    # via pydata-sphinx-theme
 alabaster==0.7.16
     # via sphinx
 babel==2.14.0
-    # via sphinx
+    # via
+    #   pydata-sphinx-theme
+    #   sphinx
 beautifulsoup4==4.12.3
     # via pydata-sphinx-theme
 certifi==2024.2.2
@@ -16,7 +20,7 @@ charset-normalizer==3.3.2
     # via requests
 commonmark==0.9.1
     # via recommonmark
-docutils==0.17.1
+docutils==0.20.1
     # via
     #   pydata-sphinx-theme
     #   recommonmark
@@ -34,13 +38,14 @@ packaging==24.0
     # via
     #   pydata-sphinx-theme
     #   sphinx
-pydata-sphinx-theme==0.8.1
+pydata-sphinx-theme==0.15.2
     # via sphinx-book-theme
 pygments==2.17.2
-    # via sphinx
-pyyaml==6.0.1
-    # via sphinx-book-theme
-recommonmark==0.6.0
+    # via
+    #   accessible-pygments
+    #   pydata-sphinx-theme
+    #   sphinx
+recommonmark==0.7.1
     # via -r requirements/doc.in
 requests==2.31.0
     # via
@@ -51,7 +56,7 @@ snowballstemmer==2.2.0
     # via sphinx
 soupsieve==2.5
     # via beautifulsoup4
-sphinx==4.2.0
+sphinx==7.2.6
     # via
     #   -r requirements/doc.in
     #   pydata-sphinx-theme
@@ -62,11 +67,11 @@ sphinx==4.2.0
     #   sphinxcontrib-contentui
     #   sphinxcontrib-images
     #   sphinxcontrib-youtube
-sphinx-book-theme==0.3.3
+sphinx-book-theme==1.1.2
     # via -r requirements/doc.in
-sphinx-copybutton==0.5.0
+sphinx-copybutton==0.5.2
     # via -r requirements/doc.in
-sphinx-panels==0.6.0
+sphinx-panels==0.4.1
     # via -r requirements/doc.in
 sphinxcontrib-applehelp==1.0.8
     # via sphinx
@@ -80,16 +85,15 @@ sphinxcontrib-images==0.9.4
     # via -r requirements/doc.in
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-mermaid==0.7.1
+sphinxcontrib-mermaid==0.9.2
     # via -r requirements/doc.in
 sphinxcontrib-qthelp==1.0.7
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.10
     # via sphinx
-sphinxcontrib-youtube==1.2.0
+sphinxcontrib-youtube==1.4.1
     # via -r requirements/doc.in
+typing-extensions==4.11.0
+    # via pydata-sphinx-theme
 urllib3==2.2.1
     # via requests
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
