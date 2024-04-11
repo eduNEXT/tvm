@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.1 - 2024-04-11
+
+### [2.2.1](https://github.com/eduNEXT/tvm/compare/v2.2.0...v2.2.1) (2024-04-11)
+
+### Bug Fixes
+
+- add build.os to RTD & install proper youtube sphinx dep ([#72](https://github.com/eduNEXT/tvm/issues/72)) ([134ed7f](https://github.com/eduNEXT/tvm/commit/134ed7f808e55fba69e6f4be4b00961ab15942eb))
+
+### Continuous Integration
+
+- adds mantainer group ([#62](https://github.com/eduNEXT/tvm/issues/62)) ([41b0145](https://github.com/eduNEXT/tvm/commit/41b0145ae561be6f765a5ed2899a4536f7582650))
+- adds pr mantainer group ([#65](https://github.com/eduNEXT/tvm/issues/65)) ([2b5e5b1](https://github.com/eduNEXT/tvm/commit/2b5e5b1e39e262b54f28aa4d939ff75900e4676f))
+
 ## v2.2.0 - 2022-12-22
 
 ### [2.2.0](https://github.com/eduNEXT/tvm/compare/v2.1.1...v2.2.0) (2022-12-22)
