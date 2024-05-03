@@ -9,6 +9,7 @@ import zipfile
 from typing import List, Optional
 
 import requests
+from packaging.version import parse
 
 from tvm.share.domain.client_logger_repository import ClientLoggerRepository
 from tvm.version_manager.domain.tutor_version import TutorVersion
@@ -223,6 +224,20 @@ class VersionManagerGitRepository(VersionManagerRepository):
 
         self.set_current_info(data=data)
         self.set_switcher()
+
+    def __valid_version_comparer(self, version_name: str):
+        """
+        Turn version name to a valid version object.
+
+        Uses '+' symbol to define local version labels instead "@"
+        https://peps.python.org/pep-0440/#local-version-identifiers
+        """
+        valid_version_name = version_name.replace("@", "+")
+        return parse(valid_version_name)
+
+    def sort_tutor_versions(self, versions: List[TutorVersion]):
+        """Sort tutor versions in ascending order."""
+        return sorted(versions, reverse=False, key=self.__valid_version_comparer)
 
     @staticmethod
     def version_is_installed(version: str) -> bool:

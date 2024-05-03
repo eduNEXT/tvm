@@ -6,7 +6,6 @@ import re
 import stat
 import subprocess
 import sys
-from distutils.version import LooseVersion  # pylint: disable=W0402
 from typing import Optional
 
 import click
@@ -142,7 +141,7 @@ def list_versions(limit: int):
     version_names = lister(limit=limit)
     local_versions = version_manager.local_versions(f"{TVM_PATH}")
     version_names = list(set(version_names + local_versions))
-    version_names = sorted(version_names, reverse=False, key=LooseVersion)
+    version_names = version_manager.sort_tutor_versions(version_names)
     global_active = version_manager.current_version(f"{TVM_PATH}")
     project_version = None
 
