@@ -16,7 +16,7 @@ charset-normalizer==3.3.2
     #   requests
 click==8.1.7
     # via -r requirements/base.txt
-coverage==7.4.4
+coverage==7.5.0
     # via -r requirements/dev.in
 dill==0.3.8
     # via pylint
@@ -24,9 +24,9 @@ distlib==0.3.8
     # via
     #   -r requirements/base.txt
     #   virtualenv
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via pytest
-filelock==3.13.3
+filelock==3.14.0
     # via
     #   -r requirements/base.txt
     #   virtualenv
@@ -36,7 +36,7 @@ gitdb==4.0.11
     #   gitpython
 gitpython==3.1.43
     # via -r requirements/base.txt
-idna==3.6
+idna==3.7
     # via
     #   -r requirements/base.txt
     #   requests
@@ -58,16 +58,17 @@ mccabe==0.7.0
     # via pylint
 packaging==24.0
     # via
+    #   -r requirements/base.txt
     #   pudb
     #   pytest
 parso==0.8.4
     # via jedi
-platformdirs==4.2.0
+platformdirs==4.2.1
     # via
     #   -r requirements/base.txt
     #   pylint
     #   virtualenv
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 pudb==2024.1
     # via -r requirements/dev.in
@@ -81,7 +82,7 @@ pylint==2.14.5
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/dev.in
-pytest==8.1.1
+pytest==8.2.0
     # via -r requirements/dev.in
 pyyaml==6.0.1
     # via -r requirements/base.txt
@@ -107,13 +108,13 @@ urllib3==2.2.1
     # via
     #   -r requirements/base.txt
     #   requests
-urwid==2.6.10
+urwid==2.6.11
     # via
     #   pudb
     #   urwid-readline
 urwid-readline==0.14
     # via pudb
-virtualenv==20.25.1
+virtualenv==20.26.1
     # via -r requirements/base.txt
 wcwidth==0.2.13
     # via urwid
