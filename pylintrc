@@ -1,22 +1,13 @@
-
 [MASTER]
 ignore = migrations, templates
 persistent = yes
 
 [MESSAGES CONTROL]
 disable =
-    locally-disabled,
-    locally-enabled,
     too-few-public-methods,
-    bad-builtin,
-    star-args,
-    abstract-class-not-used,
-    abstract-class-little-used,
-    no-init,
     fixme,
     logging-format-interpolation,
     too-many-lines,
-    no-self-use,
     too-many-ancestors,
     too-many-instance-attributes,
     too-few-public-methods,
@@ -29,7 +20,6 @@ disable =
 
 [REPORTS]
 output-format = text
-files-output = no
 reports = no
 evaluation = 10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
 
@@ -54,7 +44,6 @@ docstring-min-length = -1
 max-line-length = 120
 ignore-long-lines = ^\s*(# )?<?https?://\S+>?$
 single-line-if-stmt = no
-no-space-check = trailing-comma,dict-separator
 max-module-lines = 1000
 indent-string = '    '
 
@@ -118,11 +107,6 @@ max-public-methods = 20
 
 [IMPORTS]
 deprecated-modules = regsub,TERMIOS,Bastion,rexec
-import-graph =
-ext-import-graph =
-int-import-graph =
 
 [EXCEPTIONS]
 overgeneral-exceptions = Exception
-
-# 1a67033d4799199101eddf63b8ed0bef3e61bda7

@@ -99,7 +99,6 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
     def create_project(self, project_name: ProjectName) -> None:
         """Duplicate the version directory and rename it."""
         project_path = os.path.join(TVM_PATH, project_name)
-        
         if not os.path.exists(project_path):
             tutor_version = project_name.split("@")[0]
             tutor_version_folder = os.path.join(TVM_PATH, tutor_version)
