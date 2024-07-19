@@ -1,12 +1,9 @@
-@font-face {
-font-family: "PoppinsRegular";
-src: url("https://energiasrenovables.edunext.io/asset-v1:energiasrenovables+er01+2022_T1+type@asset+block@Poppins-Regular.ttf") format('truetype');
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
 
 body {
   padding-top: 0!important;
-  font-family: "PoppinsRegular", serif;
+  font-family: "Poppins", sans-serif;
   width: 112% !important;
 }
 
