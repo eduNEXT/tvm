@@ -4,8 +4,8 @@ TVM is a tool that allows you to manage several Tutor development environments s
 
 TVM is also the acronym for:
 
-- Tutor Version Manager: manages the version of Tutor.
-- Tutor enVironment Manager: for creating project-based environments with Tutor.
+- **Tutor Version Manager:** Handle the Tutor versions.
+- **Tutor enVironment Manager:** Create project-based environments with Tutor.
 
 # Installing TVM
 
@@ -58,8 +58,11 @@ source .tvm/bin/activate
 5. Run your project.
 
 ```bash
-tutor local quickstart
+tutor local launch
 ```
+
+> [!NOTE]
+> For Tutor versions <15, init a project with `tutor local quickstart`
 
 You can start configuring and using your Tutor instance.
 

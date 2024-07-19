@@ -17,8 +17,8 @@ TVM works with Tutor for that reason the Tutor requirements are also the TVM req
 **Basic Requirements:**
 
 - Software:
-    - `Docker <https://docs.docker.com/engine/installation/>`_: v18.06.0+
-    - `Docker Compose <https://docs.docker.com/compose/install/>`_: v1.22.0+
+    - `Docker <https://docs.docker.com/engine/installation/>`_: v24.0.5+ (with BuildKit 0.11+)
+    - `Docker Compose <https://docs.docker.com/compose/install/>`_: v2.0.0+
 - Hardware:
     - Minimum configuration: 4 GB RAM, 2 CPU, 8 GB disk space
     - Recommended configuration: 8 GB RAM, 4 CPU, 25 GB disk space
@@ -66,7 +66,9 @@ Step by Step
 
     .. code-block:: bash
 
-        tutor local quickstart
+        tutor local launch
+        
+.. note:: For Tutor versions <15, init a project with ``tutor local quickstart```
 
 
 Next Steps
