@@ -1,5 +1,10 @@
 # TVM
 
+![Maintainance Badge](https://img.shields.io/badge/Status-Maintained-brightgreen)
+![Test Badge](https://img.shields.io/github/actions/workflow/status/edunext/tvm/.github%2Fworkflows%2Ftests.yml?label=Test)
+![GitHub Tag](https://img.shields.io/github/v/tag/edunext/tvm?label=Tag)
+
+
 TVM is a tool that allows you to manage several Tutor development environments so that they work in isolation, and you can work on different projects with independent Tutor versions and configurations.
 
 TVM is also the acronym for:
