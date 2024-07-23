@@ -27,39 +27,39 @@ Create and activate a new project with the following steps:
 
 1. Install the version of Tutor you want to use with TVM.
 
-```bash
-tvm install <tutor-version>
+   ```bash
+   tvm install <tutor-version>
 
-# For example:
-# tvm install v14.0.0
-```
+   # For example:
+   # tvm install v14.0.0
+   ```
 
 2. Create a new project with TVM.
 
-```bash
-tvm project init <project-name> <tutor-version>
+   ```bash
+   tvm project init <project-name> <tutor-version>
 
-# For example:
-# tvm project init tvm-test v14.0.0
-```
+   # For example:
+   # tvm project init tvm-test v14.0.0
+   ```
 
 3. Open the project folder.
 
-```bash
-cd <project-name>
-```
+   ```bash
+   cd <project-name>
+   ```
 
 4. Activate the project environment.
 
-```bash
-source .tvm/bin/activate
-```
+   ```bash
+   source .tvm/bin/activate
+   ```
 
 5. Run your project.
 
-```bash
-tutor local launch
-```
+   ```bash
+   tutor local launch
+   ```
 
 > [!NOTE]
 > For Tutor versions <15, init a project with `tutor local quickstart`
