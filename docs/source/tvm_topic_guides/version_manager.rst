@@ -84,7 +84,7 @@ List Environments and Projects
     tvm list
 
 
-.. note:: You can use the flag -l or --limit and an integer to limit the output. Ex: `tvm list --limit 10`
+.. note:: You can use the flag -l or --limit and an integer to restrict the output. E.g. ``tvm list --limit 10``
 
 
 Install Tutor Plugins
@@ -108,7 +108,7 @@ Pip
     pip install <plugin>
 
 
-.. note:: If you don't already have your project environment activated, you can activate it using `source .tvm/bin/activate`, and then you will be able to use the pip command.
+.. note:: If you don't already have your project environment activated, you can activate it using ``source .tvm/bin/activate``, and then you will be able to use the pip command.
 
 
 Uninstall Tutor Plugins
@@ -133,7 +133,7 @@ Pip
     pip uninstall <plugin>
 
 
-.. note:: If you don't already have your project environment activated, you can activate it using `source .tvm/bin/activate`, and then you will be able to use the pip command.
+.. note:: If you don't already have your project environment activated, you can activate it using ``source .tvm/bin/activate``, and then you will be able to use the pip command.
 
 
 Related

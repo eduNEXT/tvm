@@ -38,7 +38,7 @@ Remove a Project Environment
     # tvm project remove v14.0.0@tvm-test
 
 
-.. note:: You can use the flag --prune to remove all the project folder. Ex: `tvm project remove v14.0.0@tvm-test --prune`
+.. note:: You can use the flag --prune to remove all the project folder. E.g. ``tvm project remove v14.0.0@tvm-test --prune``
 
 
 Activate a Project Environment
@@ -57,7 +57,7 @@ Deactivate a Project Environment
     tvmoff
 
 
-.. warning:: If you also have another environment like a python virtual environment, you need to deactivate each virtual environment in order. For example, if you have `(venv) [v12.2.0@project-name]`, you need to run `deactivate` and then `tvmoff`.
+.. warning:: If you also have another environment like a python virtual environment, you need to deactivate each virtual environment in order. For example, if you have ``(venv) [v12.2.0@project-name]``, you need to run ``deactivate`` and then ``tvmoff``.
 
 List Environments and Projects
 --------------------------------
@@ -67,7 +67,7 @@ List Environments and Projects
     tvm list
 
 
-.. note:: You can use the flag -l or --limit and an integer to limit the output. Ex: `tvm list --limit 10`
+.. note:: You can use the flag -l or --limit and an integer to restrict the output. E.g. ``tvm list --limit 10``
 
 Install Tutor Plugins
 ----------------------
@@ -90,7 +90,7 @@ Pip
     pip install <plugin>
 
 
-.. note:: If you don't already have your project environment activated, you can activate it using `source .tvm/bin/activate`, and then you will be able to use the pip command.
+.. note:: If you don't already have your project environment activated, you can activate it using ``source .tvm/bin/activate``, and then you will be able to use the pip command.
 
 
 Uninstall Tutor Plugins
@@ -115,7 +115,7 @@ Pip
     pip uninstall <plugin>
 
 
-.. note:: If you don't already have your project environment activated, you can activate it using `source .tvm/bin/activate`, and then you will be able to use the pip command.
+.. note:: If you don't already have your project environment activated, you can activate it using ``source .tvm/bin/activate``, and then you will be able to use the pip command.
 
 
 Related

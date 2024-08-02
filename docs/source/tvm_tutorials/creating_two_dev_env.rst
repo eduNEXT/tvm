@@ -1,7 +1,7 @@
 Creating two development environments
 ######################################
 
-At the end of this Tutorial, you will have two different TVM Projects to have two development environments.
+At the end of this tutorial, you will have two different TVM projects in two separate development environments.
 
 Step by Step
 -------------
@@ -43,7 +43,7 @@ Step by Step
 
     .. code-block:: bash
 
-        tutor dev quickstart
+        tutor dev launch
 
 #.  Stop your project.
 
@@ -59,7 +59,7 @@ Step by Step
 
 #.  Repeat steps 3 to 8 using the project-name and tutor-version you want.
 
-.. note::  You can have as many projects as you want, but you can't have two projects with the same name and tutor version.
+.. note:: You can have as many projects as you want, but you can not have two projects with the same name and tutor version.
 
 Next Steps
 -----------

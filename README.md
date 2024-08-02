@@ -1,11 +1,16 @@
 # TVM
 
+![Maintainance Badge](https://img.shields.io/badge/Status-Maintained-brightgreen)
+![Test Badge](https://img.shields.io/github/actions/workflow/status/edunext/tvm/.github%2Fworkflows%2Ftests.yml?label=Test)
+![GitHub Tag](https://img.shields.io/github/v/tag/edunext/tvm?label=Tag)
+
+
 TVM is a tool that allows you to manage several Tutor development environments so that they work in isolation, and you can work on different projects with independent Tutor versions and configurations.
 
 TVM is also the acronym for:
 
-- Tutor Version Manager: manages the version of Tutor.
-- Tutor enVironment Manager: for creating project-based environments with Tutor.
+- **Tutor Version Manager:** Handle the Tutor versions.
+- **Tutor enVironment Manager:** Create project-based environments with Tutor.
 
 # Installing TVM
 
@@ -27,39 +32,42 @@ Create and activate a new project with the following steps:
 
 1. Install the version of Tutor you want to use with TVM.
 
-```bash
-tvm install <tutor-version>
+   ```bash
+   tvm install <tutor-version>
 
-# For example:
-# tvm install v14.0.0
-```
+   # For example:
+   # tvm install v14.0.0
+   ```
 
 2. Create a new project with TVM.
 
-```bash
-tvm project init <project-name> <tutor-version>
+   ```bash
+   tvm project init <project-name> <tutor-version>
 
-# For example:
-# tvm project init tvm-test v14.0.0
-```
+   # For example:
+   # tvm project init tvm-test v14.0.0
+   ```
 
 3. Open the project folder.
 
-```bash
-cd <project-name>
-```
+   ```bash
+   cd <project-name>
+   ```
 
 4. Activate the project environment.
 
-```bash
-source .tvm/bin/activate
-```
+   ```bash
+   source .tvm/bin/activate
+   ```
 
 5. Run your project.
 
-```bash
-tutor local quickstart
-```
+   ```bash
+   tutor local launch
+   ```
+
+> [!NOTE]
+> For Tutor versions <15, init a project with `tutor local quickstart`
 
 You can start configuring and using your Tutor instance.
 

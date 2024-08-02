@@ -1,7 +1,7 @@
 TVM
 ####
 
-TVM is a tool that allows you to manage several Tutor development environments so that they work in isolation, and you can work on different projects with independent Tutor versions and configurations.
+TVM is a tool that allows you to manage several Tutor development environments so that they work in isolation, and you can work on different projects with independent Tutor version and configurations.
 
 User Guide
 -----------
@@ -17,7 +17,7 @@ User Guide
 Releases
 ---------
 
-The Releases are listed on the `Github release page <https://github.com/eduNEXT/tvm/releases>`_. And all notable changes to this project are documented in the `CHANGELOG <https://github.com/eduNEXT/tvm/blob/main/CHANGELOG.md>`_ file.
+The Releases are listed on the `Github release page <https://github.com/eduNEXT/tvm/releases>`_. All notable changes to this project are documented in the `CHANGELOG <https://github.com/eduNEXT/tvm/blob/main/CHANGELOG.md>`_ file.
 
 Source code
 -----------
@@ -27,7 +27,7 @@ The complete source code for TVM is available on Github: https://github.com/eduN
 Support
 --------
 
-To get support, go to the TVM Github discussion forum: https://github.com/eduNEXT/tvm/discussions
+Get support in the TVM Github discussion forum: https://github.com/eduNEXT/tvm/discussions
 
 Contributing
 -------------
