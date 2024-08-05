@@ -4,7 +4,6 @@ import os
 import pathlib
 import shutil
 import subprocess
-from distutils.dir_util import copy_tree  # pylint: disable=W0402
 from typing import List
 
 import yaml
@@ -99,25 +98,30 @@ class EnvironmentManagerGitRepository(EnvironmentManagerRepository):
 
     def create_project(self, project_name: ProjectName) -> None:
         """Duplicate the version directory and rename it."""
-        if not os.path.exists(f"{TVM_PATH}/{project_name}"):
+        project_path = os.path.join(TVM_PATH, project_name)
+        if not os.path.exists(project_path):
             tutor_version = project_name.split("@")[0]
-            tutor_version_folder = f"{TVM_PATH}/{tutor_version}"
+            tutor_version_folder = os.path.join(TVM_PATH, tutor_version)
 
-            tvm_project = f"{TVM_PATH}/{project_name}"
-            copy_tree(tutor_version_folder, tvm_project)
-            with open(f"{tvm_project}/config.yml", "w", encoding='utf-8') as f:
-                data = {'project_directories': [f"{self.PROJECT_PATH}"]}
+            shutil.copytree(tutor_version_folder, project_path, dirs_exist_ok=True)
+
+            config_path = os.path.join(project_path, "config.yml")
+            with open(config_path, "w", encoding='utf-8') as f:
+                data = {'project_directories': [self.PROJECT_PATH]}
                 yaml.dump(data, f, default_flow_style=False)
 
-            shutil.rmtree(f"{tvm_project}/venv")
+            venv_path = os.path.join(project_path, "venv")
+            shutil.rmtree(venv_path, ignore_errors=True)
             self.setup_version_virtualenv(project_name)
         else:
-            with open(f"{TVM_PATH}/{project_name}/config.yml", "r+", encoding='utf-8') as f:
+            config_path = os.path.join(project_path, "config.yml")
+            with open(config_path, "r+", encoding='utf-8') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
-                data['project_directories'].append(f"{self.PROJECT_PATH}")
-                f.truncate(0)
-                f.seek(0)
-                yaml.dump(data, f, default_flow_style=False)
+                if self.PROJECT_PATH not in data['project_directories']:
+                    data['project_directories'].append(self.PROJECT_PATH)
+                    f.seek(0)
+                    f.truncate()
+                    yaml.dump(data, f, default_flow_style=False)
 
     @staticmethod
     def setup_version_virtualenv(version=None) -> None:

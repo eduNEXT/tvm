@@ -1,7 +1,7 @@
 """Tutor switcher jinja template."""
 from jinja2 import Template
 
-TEMPLATE = '''
+TEMPLATE = r'''
 # This file must be used with "source bin/activate" *from bash*
 # you cannot run it directly
 if [ "${BASH_SOURCE-}" = "$0" ]; then
