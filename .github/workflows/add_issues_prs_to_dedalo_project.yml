@@ -11,7 +11,14 @@ jobs:
     name: Add to project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v0.5.0
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v3
+        with:
+          application_id: ${{ vars.APOLLO_APP_ID }}
+          application_private_key: ${{ secrets.APOLLO_APP_SECRET }}
+      - name: Add to Dedalo Project
+        uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/eduNEXT/projects/1
-          github-token: ${{ secrets.DEDALO_PAT }}
+          github-token: ${{ steps.get_workflow_token.outputs.token }}
